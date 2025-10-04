@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
+import {Routes,Route, HashRouter} from 'react-router-dom'
 import Login from './components/Login'
 import Signup from './components/Signup'
 import Home from './components/Home'
@@ -24,7 +24,7 @@ function App() {
   return (
     <div>
       <CartProvider>
-      <BrowserRouter>
+      <HashRouter>
             <Navbar/>
           <Routes>
             <Route path='/' element={<Login/>} />
@@ -40,7 +40,7 @@ function App() {
              <Route path="/checkout" element={<CheckoutPage/>} />
           </Routes>
           <Footer/>
-      </BrowserRouter>
+      </HashRouter>
       </CartProvider>
      
     </div>

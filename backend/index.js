@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load .env variables at the top
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -7,9 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection
+// MongoDB Connection using .env
 mongoose
-  .connect("mongodb://127.0.0.1:27017/final")
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("DB connected.."))
   .catch((err) => console.log(err));
 
@@ -31,10 +32,10 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-// Order Schema (with userDetails + items)
+// Order Schema
 const orderschema = mongoose.Schema(
   {
-    userDetails: userSchema, // ✅ added
+    userDetails: userSchema,
     items: [cartschema],
     total: Number,
     date: { type: Date, default: Date.now },
@@ -46,12 +47,7 @@ const orderschema = mongoose.Schema(
 const Cart = mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.model("ordermod", orderschema, "buynextorder");
 
-// Export models (optional if needed elsewhere)
-module.exports = { Cart, Order };
-
-// -------------------- CART ROUTES --------------------
-
-// Get all cart items
+// CART ROUTES
 app.get("/cart", async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -61,7 +57,6 @@ app.get("/cart", async (req, res) => {
   }
 });
 
-// Add item to cart
 app.post("/cart", async (req, res) => {
   try {
     const item = new Cart(req.body);
@@ -72,7 +67,6 @@ app.post("/cart", async (req, res) => {
   }
 });
 
-// Update cart item qty
 app.put("/cart/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,7 +77,6 @@ app.put("/cart/:id", async (req, res) => {
   }
 });
 
-// Delete cart item
 app.delete("/cart/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,9 +88,7 @@ app.delete("/cart/:id", async (req, res) => {
   }
 });
 
-// -------------------- ORDER ROUTES --------------------
-
-// Get all orders
+// ORDER ROUTES
 app.get("/orders", async (req, res) => {
   try {
     const ordered = await Order.find();
@@ -107,10 +98,9 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-// Place an order (add order to DB)
 app.post("/orders", async (req, res) => {
   try {
-    console.log("Received Order:", req.body); // ✅ debug log
+    console.log("Received Order:", req.body);
     const ord = new Order(req.body);
     const savedord = await ord.save();
     res.status(201).json(savedord);
@@ -120,7 +110,8 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// -------------------- SERVER START --------------------
-app.listen(4000, () => {
-  console.log("Server Started..");
+// SERVER START
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}..`);
 });
