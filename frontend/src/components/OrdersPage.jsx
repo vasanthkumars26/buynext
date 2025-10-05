@@ -5,7 +5,7 @@ const OrdersPage = () => {
   const { orders } = useCart();
 
   if (orders.length === 0) {
-    return <h2 className="text-center mt-[10%] text-xl">No orders yet</h2>;
+    return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">No orders yet</h2>;
   }
 
   return (

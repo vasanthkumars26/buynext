@@ -88,11 +88,11 @@ const imagefooter = [{
         exit={{ opacity: 0, x:-50 }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
         
-      > <p className=" font-bold md:text-3xl lg:text-5xl" >{desc[current].stitle}</p>
-        <h1 className=" md:text-xl font-semibold mt-5" >{desc[current].title}</h1>
-        <div className="flex justify-center gap-3 mt-10">
-            <button className=" md:text-xl bg-gradient-to-r from-purple-900 to-green-900 border p-2  text-gray-300 hover:-translate-y-0.5" >{desc[current].btn1}</button>
-            <button className="md:text-xl bg-gradient-to-r from-green-900 to-purple-900   text-gray-300 hover:-translate-y-0.5 border p-2">{desc[current].btn2}</button>
+      > <p className="text-xs font-bold md:text-3xl lg:text-5xl" >{desc[current].stitle}</p>
+        <h1 className="text-xs md:text-xl font-semibold mt-5" >{desc[current].title}</h1>
+        <div className=" flex justify-center gap-3 mt-10">
+            <button className="text-xs  md:text-xl bg-gradient-to-r from-purple-900 to-green-900 border p-2  text-gray-300 hover:-translate-y-0.5" >{desc[current].btn1}</button>
+            <button className=" text-xs md:text-xl bg-gradient-to-r from-green-900 to-purple-900   text-gray-300 hover:-translate-y-0.5 border p-2">{desc[current].btn2}</button>
         </div></motion.div>
       </div>
 

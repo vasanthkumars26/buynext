@@ -14,7 +14,7 @@ const CartPage = () => {
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   if (cart.length === 0) {
-    return <h2 className="text-center mt-[10%] text-xl">Your cart is empty</h2>;
+    return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">Your cart is empty</h2>;
   }
 
 

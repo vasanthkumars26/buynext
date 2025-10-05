@@ -7,7 +7,7 @@ const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useCart();
 
   if (wishlist.length === 0) {
-    return <h2 className="text-center mt-[10%] text-xl">No products in your Wishlist</h2>;
+    return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">No products in your Wishlist</h2>;
   }
 
   return (
