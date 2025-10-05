@@ -81,7 +81,7 @@ const imagefooter = [{
 
         
       <div className="" >
-       <motion.div className="absolute top-8 sm:top-10 left-56 md:top-42 md:left-96 lg:top-52 bg-gradient-to-r from-green-600 to-black bg-clip-text text-transparent ml-20 " 
+       <motion.div className="absolute top-2 sm:top-10 left-56 md:top-42 md:left-96 lg:top-52 bg-gradient-to-r from-green-600 to-black bg-clip-text text-transparent ml-20 " 
         key={current} // important for re-triggering animation when slide changes
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: -30 }}
