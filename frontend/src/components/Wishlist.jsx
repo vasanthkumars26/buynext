@@ -1,13 +1,18 @@
 import React, { useEffect } from "react";
 import { useCart } from "../context/Cartcon";
-import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
+import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 
 
 const Wishlist = () => {
-  const { wishlist, removeFromWishlist } = useCart();
+  const { wishlist, removeFromWishlist,addtoCart } = useCart();
 
   if (wishlist.length === 0) {
     return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">No products in your Wishlist</h2>;
+  }
+
+  const moveToCart = (item)=>{
+    addtoCart(item);
+    removeFromWishlist(item._id);
   }
 
   return (
@@ -30,6 +35,10 @@ const Wishlist = () => {
                 <p className="text-green-600">${item.price}</p>
               </div>
             </div>
+
+              <div className="flex items-center gap-4" >
+                <button className="p-2 bg-green-500 text-white rounded flex items-center gap-1" onClick={()=>moveToCart(item)} ><FaShoppingCart/>Add to Cart</button>
+              </div>
 
             <div className="flex items-center gap-4">
               <button
