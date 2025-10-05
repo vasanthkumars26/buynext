@@ -21,8 +21,9 @@ const CheckoutPage = () => {
     e.preventDefault();
 
     try {
-      await placeOrderWithUser(formData); // ✅ pass user details
+      await placeOrderWithUser(formData); // user details anupuromm
       navigate("/ordersuccess");
+      alert("🚀Order Placed Successfully!")
     } catch (err) {
       console.error("Error:", err);
       alert("Server Error. Try again later.");

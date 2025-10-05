@@ -175,12 +175,13 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   };
 
-  // Existing placeorder (kept intact)
-  const placeorder = async () => {
+  // Existing placeorder
+  const placeorder = async (userDetails) => {
     if (cart.length == 0) return;
 
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const newOrder = {
+      userDetails,
       id: Date.now(),
       items: cart,
       total,
@@ -197,7 +198,7 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
-  // ✅ New function to place order with user details
+  // place order with user details
   const placeOrderWithUser = async (userDetails) => {
     if (cart.length === 0) return;
 

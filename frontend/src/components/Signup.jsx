@@ -42,7 +42,7 @@ const Signup = () => {
   }
 
   return (
-    <div className='mt-[8%]'>
+    <div className='mt-[22%] md:mt-[8%]'>
 
       <form onSubmit={handleuser} >
         <h2 className='mb-5 text-3xl font-bold p-2 ' >SignUp</h2>
