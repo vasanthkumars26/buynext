@@ -37,7 +37,7 @@ const Wishlist = () => {
             </div>
 
               <div className="flex items-center gap-4" >
-                <button className="p-2 bg-green-500 text-white rounded flex items-center gap-1" onClick={()=>moveToCart(item)} ><FaShoppingCart/>Add to Cart</button>
+                <button className="p-2 bg-green-500 text-white rounded flex items-center gap-1" onClick={()=>moveToCart(item)} ><FaShoppingCart/>Add</button>
               </div>
 
             <div className="flex items-center gap-4">
