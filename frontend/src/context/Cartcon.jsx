@@ -150,6 +150,18 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   };
 
+  const updateqty = async (id, qty) => {
+    const item = cart.find((p) => p._id === id);
+    if (!item) return;
+    const updated = { ...item, qty };
+    await fetch(`http://localhost:4000/cart/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    fetchCart();
+  };
+
   const addToWishlist = (product) => {
     setWishlist((prev) => {
       if (!prev.find((item) => item._id === product._id)) {
@@ -163,19 +175,9 @@ export const CartProvider = ({ children }) => {
     setWishlist(wishlist.filter((item) => item._id !== id));
   };
 
-  const updateqty = async (id, qty) => {
-    const item = cart.find((p) => p._id === id);
-    if (!item) return;
-    const updated = { ...item, qty };
-    await fetch(`http://localhost:4000/cart/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    fetchCart();
-  };
+  
 
-  // Existing placeorder
+  // placeorder
   const placeorder = async (userDetails) => {
     if (cart.length == 0) return;
 
@@ -198,14 +200,14 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
-  // place order with user details
+  //2nd create pannathu
   const placeOrderWithUser = async (userDetails) => {
     if (cart.length === 0) return;
 
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
     const newOrder = {
-      userDetails, // attach user details
+      userDetails, 
       items: cart,
       total,
       date: new Date(),

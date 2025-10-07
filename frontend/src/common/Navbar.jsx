@@ -65,21 +65,21 @@ const Navbar = () => {
                 <div >
                     <Link to="/home" className='mr-2 text-2xl font-bold' >BuyNext</Link>
                 </div>
-                <div className='hidden md:flex w-[40%] items-center'>
+                {log && <div className='hidden md:flex w-[40%] items-center'>
                     <input onKeyDown={handleKeyDown} value={search} onChange={(e) => setSearch(e.target.value)} type="text" className=' border border-gray-400  outline-none p-2 md:w-[100%]' />
                     <button disabled={() => input.length === 0} onClick={handlesearchbtn} className=' bg-gradient-to-r from-green-300 to-green-500 hover:from-green-500 hover:to-green-300 p-2 border border-gray-400    ' >Search</button>
-                </div>
+                </div>}
 
                 <div className="hidden gap-16 items-center  lg:flex">
 
-                    <div className="relative group">
+                   {log && <div className="relative group">
                         <Link to="/">
                             <FaHome className="text-2xl" />
                         </Link>
                         <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             Home
                         </span>
-                    </div>
+                    </div>}
 
                     {log && <div className="relative group">
                         <Link to="/wishlist" className='flex'>
@@ -100,14 +100,14 @@ const Navbar = () => {
                     </div>}
 
 
-                    <div className="relative group">
+                   {log && <div className="relative group">
                         <Link to="/blogs">
                             <FaAddressCard className="text-2xl" />
                         </Link>
                         <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                            Blogs
                         </span>
-                    </div>
+                    </div>}
 
                      {log && (
       <div className='bg-green-200 p-2 rounded-xl' >
