@@ -2,9 +2,10 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 const Cartcon = createContext();
 
-// Vite env variable
+// Use Vite env variable
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+// Helper for localStorage
 const safeJSONParse = (key) => {
   try {
     const data = localStorage.getItem(key);
@@ -20,33 +21,30 @@ export const CartProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   const [cart, setCart] = useState(() => safeJSONParse("cart"));
   const [orders, setOrders] = useState(() => safeJSONParse("orders"));
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => localStorage.setItem("wishlist", JSON.stringify(wishlist)), [wishlist]);
   useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
 
+  // Fetch cart items
   const fetchCart = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch(`${BASE_URL}/cart`);
-      if (!res.ok) throw new Error("Failed to fetch cart");
       const data = await res.json();
       setCart(data);
     } catch (err) {
       console.error("Fetch Cart Error:", err);
-      setError("Failed to load cart. Try again later.");
       setCart([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch orders
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${BASE_URL}/orders`);
-      if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -55,8 +53,8 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchOrders();
     fetchCart();
+    fetchOrders();
   }, []);
 
   const allproducts = [
@@ -71,15 +69,10 @@ export const CartProvider = ({ children }) => {
   ];
 
   const addtoCart = async (product) => {
-    setLoading(true);
-    setError(null);
     setCart((prev) => {
       const existing = prev.find((p) => p._id === product._id);
-      if (existing) {
-        return prev.map((p) => (p._id === product._id ? { ...p, qty: p.qty + 1 } : p));
-      } else {
-        return [...prev, { ...product, qty: 1 }];
-      }
+      if (existing) return prev.map((p) => p._id === product._id ? { ...p, qty: p.qty + 1 } : p);
+      return [...prev, { ...product, qty: 1 }];
     });
 
     try {
@@ -100,32 +93,21 @@ export const CartProvider = ({ children }) => {
       fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
-      setError("Failed to add to cart. Try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
   const removeFromCart = async (id) => {
-    setLoading(true);
-    setError(null);
     try {
       await fetch(`${BASE_URL}/cart/${id}`, { method: "DELETE" });
       fetchCart();
     } catch (err) {
       console.error("Remove from cart error:", err);
-      setError("Failed to remove item. Try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
   const updateqty = async (id, qty) => {
-    setLoading(true);
-    setError(null);
     const item = cart.find((p) => p._id === id);
     if (!item) return;
-
     try {
       await fetch(`${BASE_URL}/cart/${id}`, {
         method: "PUT",
@@ -135,30 +117,20 @@ export const CartProvider = ({ children }) => {
       fetchCart();
     } catch (err) {
       console.error("Update quantity error:", err);
-      setError("Failed to update quantity.");
-    } finally {
-      setLoading(false);
     }
   };
 
   const addToWishlist = (product) => {
     setWishlist((prev) => (!prev.find((i) => i._id === product._id) ? [...prev, product] : prev));
   };
+
   const removeFromWishlist = (id) => setWishlist(wishlist.filter((item) => item._id !== id));
 
   const placeOrderWithUser = async (userDetails) => {
     if (cart.length === 0) return;
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-    const newOrder = {
-      userDetails,
-      items: cart,
-      total,
-      date: new Date(),
-    };
-
-    setLoading(true);
-    setError(null);
+    const newOrder = { userDetails, items: cart, total, date: new Date() };
 
     try {
       await fetch(`${BASE_URL}/orders`, {
@@ -167,13 +139,11 @@ export const CartProvider = ({ children }) => {
         body: JSON.stringify(newOrder),
       });
 
+      // clear cart after order
       setCart([]);
       fetchOrders();
     } catch (err) {
       console.error("Place order error:", err);
-      setError("Failed to place order.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -192,7 +162,6 @@ export const CartProvider = ({ children }) => {
         placeOrderWithUser,
         allproducts,
         loading,
-        error,
       }}
     >
       {children}
