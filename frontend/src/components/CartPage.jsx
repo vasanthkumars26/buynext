@@ -1,64 +1,186 @@
-import React from "react";
-import { useCart } from "../context/Cartcon";
-import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-const CartPage = () => {
-  const navigate = useNavigate();
-  const { cart, updateqty, removeFromCart, loading } = useCart();
+const Cartcon = createContext();
 
-  const handlecheckout = () => {
-    navigate("/checkout");
+// Use Vite env variable
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+const safeJSONParse = (key) => {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error(`Invalid JSON in localStorage for ${key}:`, e);
+    localStorage.removeItem(key);
+    return [];
+  }
+};
+
+export const CartProvider = ({ children }) => {
+  const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
+  const [cart, setCart] = useState(() => safeJSONParse("cart"));
+  const [orders, setOrders] = useState(() => safeJSONParse("orders"));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Save to localStorage
+  useEffect(() => localStorage.setItem("wishlist", JSON.stringify(wishlist)), [wishlist]);
+  useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
+
+  // Fetch cart
+  const fetchCart = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/cart`);
+      const data = await res.json();
+      setCart(data);
+    } catch (err) {
+      console.error("Fetch Cart Error:", err);
+      setCart([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  // Fetch orders
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/orders`);
+      const data = await res.json();
+      setOrders(data);
+    } catch (err) {
+      console.error("Fetch Orders Error:", err);
+    }
+  };
 
-  if (loading) {
-    return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl animate-pulse">Loading cart...</h2>;
-  }
+  useEffect(() => {
+    fetchCart();
+    fetchOrders();
+  }, []);
 
-  if (cart.length === 0) {
-    return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">Your cart is empty</h2>;
-  }
+  const allproducts = [
+    { _id: 1, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg?v=1597047059", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
+    { _id: 2, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg?v=1597046790", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
+    { _id: 3, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11_329e9eaa-7056-4ee4-a8f8-1b6cd01a4ffe.jpg?v=1597047746", desc: "Long Sleeve Sweatshirts", price: 15.47, category: "Hoodies" },
+    { _id: 4, img: "https://lacozt.myshopify.com/cdn/shop/products/Product12_90960967-e37e-4f11-ab69-4e876a3704ff.jpg?v=1597047912", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps" },
+    { _id: 5, img: "https://lacozt.myshopify.com/cdn/shop/products/PulloverHoodie.jpg?v=1681801550&width=360", desc: "Pull Over Hoodie", price: 12.47, category: "Hoodies" },
+    { _id: 6, img: "https://lacozt.myshopify.com/cdn/shop/products/Women_sRibbedT-Shirt3.jpg?v=1680848975&width=360", desc: "Women's Ribbed T-Shirt", price: 19.37, category: "T-Shirts" },
+    { _id: 7, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg?v=1680848440&width=360", desc: "Men's Sweat Pullover Hoodie", price: 13.67, category: "Hoodies" },
+    { _id: 8, img: "https://lacozt.myshopify.com/cdn/shop/products/PerformanceT-Shirt3.jpg?v=1680848622&width=360", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts" },
+  ];
+
+  // Cart actions
+  const addtoCart = async (product) => {
+    setCart((prev) => {
+      const existing = prev.find((p) => p._id === product._id);
+      if (existing) return prev.map((p) => (p._id === product._id ? { ...p, qty: p.qty + 1 } : p));
+      else return [...prev, { ...product, qty: 1 }];
+    });
+
+    try {
+      const existing = cart.find((p) => p._id === product._id);
+      if (existing) {
+        await fetch(`${BASE_URL}/cart/${existing._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...existing, qty: existing.qty + 1 }),
+        });
+      } else {
+        await fetch(`${BASE_URL}/cart`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...product, qty: 1 }),
+        });
+      }
+      fetchCart();
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    }
+  };
+
+  const removeFromCart = async (id) => {
+    try {
+      await fetch(`${BASE_URL}/cart/${id}`, { method: "DELETE" });
+      fetchCart();
+    } catch (err) {
+      console.error("Remove from cart error:", err);
+    }
+  };
+
+  const updateqty = async (id, qty) => {
+    const item = cart.find((p) => p._id === id);
+    if (!item) return;
+    try {
+      await fetch(`${BASE_URL}/cart/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, qty }),
+      });
+      fetchCart();
+    } catch (err) {
+      console.error("Update quantity error:", err);
+    }
+  };
+
+  // Wishlist actions
+  const addToWishlist = (product) => {
+    setWishlist((prev) => (!prev.find((i) => i._id === product._id) ? [...prev, product] : prev));
+  };
+  const removeFromWishlist = (id) => setWishlist(wishlist.filter((item) => item._id !== id));
+
+  // Place order
+  const placeOrderWithUser = async (userDetails) => {
+    if (cart.length === 0) return;
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const newOrder = { userDetails, items: cart, total, date: new Date() };
+
+    setLoading(true);
+    try {
+      // Save order
+      const orderRes = await fetch(`${BASE_URL}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrder),
+      });
+
+      if (!orderRes.ok) throw new Error("Failed to place order");
+
+      // Clear cart on backend
+      await Promise.all(cart.map(item => fetch(`${BASE_URL}/cart/${item._id}`, { method: "DELETE" })));
+
+      // Clear cart locally
+      setCart([]);
+
+      // Update orders
+      fetchOrders();
+    } catch (err) {
+      console.error("Place order error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="max-w-5xl mt-[24%] mx-auto sm:mt-[14%] md:mt-[9%] lg:mt-[8%]">
-      <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-      <div className="space-y-6">
-        {cart.map((item) => (
-          <div key={item._id} className="flex items-center justify-between border p-4 rounded-lg">
-            <div className="flex items-center gap-4">
-              <img src={item.img} alt={item.desc} className="w-24 h-24 object-cover rounded" />
-              <div>
-                <h2 className="font-semibold">{item.desc}</h2>
-                <p className="text-green-600">${item.price}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button onClick={() => updateqty(item._id, item.qty > 1 ? item.qty - 1 : 1)} className="p-2 bg-gray-200 rounded">
-                <FaMinus />
-              </button>
-              <span>{item.qty}</span>
-              <button onClick={() => updateqty(item._id, item.qty + 1)} className="p-2 bg-gray-200 rounded">
-                <FaPlus />
-              </button>
-              <button onClick={() => removeFromCart(item._id)} className="p-2 bg-red-500 text-white rounded">
-                <FaTrash />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 text-right m-2">
-        <h2 className="text-2xl font-bold">Total: ${totalPrice.toFixed(2)}</h2>
-        <button onClick={handlecheckout} className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
+    <Cartcon.Provider
+      value={{
+        wishlist,
+        addToWishlist,
+        removeFromWishlist,
+        cart,
+        addtoCart,
+        setCart,
+        updateqty,
+        removeFromCart,
+        orders,
+        placeOrderWithUser,
+        allproducts,
+        loading,
+        error,
+      }}
+    >
+      {children}
+    </Cartcon.Provider>
   );
 };
 
-export default CartPage;
+export const useCart = () => useContext(Cartcon);
