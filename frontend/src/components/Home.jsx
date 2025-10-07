@@ -67,12 +67,11 @@ const imagefooter = [{
     const interval = setInterval(()=>{
         prevSlide()
     },3000)
-    return () => clearInterval(interval); // cleanup on unmount
+    return () => clearInterval(interval); 
   }, []);
 
   return (
     <div className="relative w-full max-w-7xl mx-auto mt-10">
-      {/* Image */}
       <img
         src={images[current]}
         alt="carousel"
@@ -82,7 +81,7 @@ const imagefooter = [{
         
       <div className="" >
        <motion.div className="absolute top-2 sm:top-10 left-56 md:top-42 md:left-96 lg:top-52 bg-gradient-to-r from-green-600 to-black bg-clip-text text-transparent ml-20 " 
-        key={current} // important for re-triggering animation when slide changes
+        key={current} 
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: -30 }}
         exit={{ opacity: 0, x:-50 }}
@@ -96,7 +95,6 @@ const imagefooter = [{
         </div></motion.div>
       </div>
 
-      {/* Left Arrow */}
       <button
         onClick={prevSlide}
         className="absolute md:top-1/5 left-5 -translate-y-28  transform  lg:-translate-y-1/5 bg-gray-800 text-white p-3 rounded-full hover:bg-gray-600"
@@ -104,7 +102,6 @@ const imagefooter = [{
         <FaArrowLeft />
       </button>
 
-      {/* Right Arrow */}
       <button
         onClick={nextSlide}
         className="absolute md:top-1/5 right-5 -translate-y-28 transform  lg:-translate-y-1/5 text-sm bg-gray-800 text-white p-3 rounded-full hover:bg-gray-600"
@@ -112,7 +109,6 @@ const imagefooter = [{
         <FaArrowRight />
       </button>
 
-      {/* Dots Indicator */}
       <div className="flex justify-center mt-4 space-x-2">
         {images.map((_, idx) => (
           <span

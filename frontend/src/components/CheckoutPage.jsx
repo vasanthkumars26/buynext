@@ -6,6 +6,7 @@ const CheckoutPage = () => {
   const { cart, placeOrderWithUser } = useCart();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,16 +20,27 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      await placeOrderWithUser(formData); // user details anupuromm
+      await placeOrderWithUser(formData); // user details sent
       navigate("/ordersuccess");
-      alert("🚀Order Placed Successfully!")
+      alert("🚀 Order Placed Successfully!");
     } catch (err) {
       console.error("Error:", err);
       alert("Server Error. Try again later.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <h2 className="text-center mt-[20%] md:mt-[12%] text-xl animate-pulse">
+        Placing your order...
+      </h2>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-[20%] sm:mt-[12%] md:mt-[9%] p-6 border rounded-lg shadow">
