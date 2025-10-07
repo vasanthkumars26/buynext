@@ -1,39 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useCart } from "../context/Cartcon";
 import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import {data, useNavigate} from 'react-router-dom'
 
 const CartPage = () => {
-  const navigate = useNavigate();
-  const { cart, updateqty, removeFromCart, fetchCart } = useCart();
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
+  const { cart, updateqty, removeFromCart } = useCart();
 
-  const handlecheckout = () => {
-    navigate("/checkout");
-  };
-
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  useEffect(() => {
-    const loadCart = async () => {
-      setLoading(true);
-      await fetchCart();
-      setLoading(false);
-    };
-    loadCart();
-  }, [fetchCart]);
-
-  if (loading) {
-    return (
-      <h2 className="text-center mt-[28%] md:mt-[10%] text-xl animate-pulse">
-        Loading your cart...
-      </h2>
-    );
+  const handlecheckout = ()=>{
+    navigate("/checkout")
   }
+  
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   if (cart.length === 0) {
     return <h2 className="text-center mt-[28%] md:mt-[10%] text-xl">Your cart is empty</h2>;
   }
+
 
   return (
     <div className="max-w-5xl mt-[24%] mx-auto sm:mt-[14%] md:mt-[9%] lg:mt-[8%]">
@@ -58,13 +41,15 @@ const CartPage = () => {
 
             <div className="flex items-center gap-4">
               <button
-                onClick={() => updateqty(item._id, item.qty > 1 ? item.qty - 1 : 1)}
+                onClick={() =>
+                  updateqty(item._id, item.qty > 1 ? item.qty - 1 : 1)
+                }
                 className="p-2 bg-gray-200 rounded"
               >
                 <FaMinus />
               </button>
               <span>{item.qty}</span>
-
+              
               <button
                 onClick={() => updateqty(item._id, item.qty + 1)}
                 className="p-2 bg-gray-200 rounded"
@@ -85,10 +70,7 @@ const CartPage = () => {
 
       <div className="mt-6 text-right m-2">
         <h2 className="text-2xl font-bold">Total: ${totalPrice.toFixed(2)}</h2>
-        <button
-          onClick={handlecheckout}
-          className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
+        <button onClick={handlecheckout } className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
           Proceed to Checkout
         </button>
       </div>
