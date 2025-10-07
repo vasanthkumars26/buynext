@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 const Cartcon = createContext();
 
-const BASE_URL = "http://192.168.115.173:4000";
+// Use Vite env variable
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const safeJSONParse = (key) => {
   try {
@@ -19,20 +20,27 @@ export const CartProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   const [cart, setCart] = useState(() => safeJSONParse("cart"));
   const [orders, setOrders] = useState(() => safeJSONParse("orders"));
+  const [loading, setLoading] = useState(true); // New loading state
 
   useEffect(() => localStorage.setItem("wishlist", JSON.stringify(wishlist)), [wishlist]);
   useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
 
+  // Fetch cart
   const fetchCart = async () => {
+    setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/cart`);
       const data = await res.json();
       setCart(data);
     } catch (err) {
       console.error("Fetch Cart Error:", err);
+      setCart([]);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Fetch orders
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${BASE_URL}/orders`);
@@ -59,7 +67,6 @@ export const CartProvider = ({ children }) => {
     { _id: 8, img: "https://lacozt.myshopify.com/cdn/shop/products/PerformanceT-Shirt3.jpg?v=1680848622&width=360", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts" },
   ];
 
-  // Cart operations
   const addtoCart = async (product) => {
     setCart((prev) => {
       const existing = prev.find((p) => p._id === product._id);
@@ -115,13 +122,11 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Wishlist
   const addToWishlist = (product) => {
     setWishlist((prev) => (!prev.find((i) => i._id === product._id) ? [...prev, product] : prev));
   };
   const removeFromWishlist = (id) => setWishlist(wishlist.filter((item) => item._id !== id));
 
-  // Place order
   const placeOrderWithUser = async (userDetails) => {
     if (cart.length === 0) return;
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -161,6 +166,7 @@ export const CartProvider = ({ children }) => {
         orders,
         placeOrderWithUser,
         allproducts,
+        loading, // expose loading for components
       }}
     >
       {children}
