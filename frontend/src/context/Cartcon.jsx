@@ -12,6 +12,8 @@ const safeJSONParse = (key) => {
   }
 };
 
+const API_URL = "buynext-backend.vercel.app";
+
 export const CartProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   useEffect(() => {
