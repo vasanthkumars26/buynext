@@ -5,7 +5,7 @@ import {data, useNavigate} from 'react-router-dom'
 
 const CartPage = () => {
   const navigate = useNavigate()
-  const { cart, updateqty, removeFromCart } = useCart();
+  const { cart, updateqty, removeFromCart,placeorder,setCart } = useCart();
 
   const handlecheckout = ()=>{
     navigate("/checkout")
