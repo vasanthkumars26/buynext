@@ -185,7 +185,7 @@ const Belhome = () => {
       {fimage1.map((img, index) => (
         <div key={index} className='relative mt-10 w-[100%]'>
           <img src={img.img} alt="fimage" />
-          <div className='absolute top-10 md:top-24 md:left-72 lg:top-44 lg:left-96 ml-52'>
+          <div className='absolute top-3 md:top-24 md:left-72 lg:top-44 lg:left-96 ml-52'>
             <p className='text-sm md:text-5xl font-bold text-black'>{img.desc}</p>
             <p className='text-sm md:text-2xl mt-3 font-semibold mb-6'>{img.titl}</p>
             <Link to="/" className='text-sm md:text-xl bg-green-950 p-2 rounded-2xl text-white hover:from-black hover:to-green-800'>{img.btna}</Link>

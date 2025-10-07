@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const Blogs = () => {
-  // Sample blogs (replace with API later)
+  
   const [blogs] = useState([
     {
       _id: 1,
