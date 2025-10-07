@@ -1,4 +1,4 @@
-require('dotenv').config(); 
+require('dotenv').config(); // Load .env variables at the top
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -6,18 +6,15 @@ const mongoose = require("mongoose");
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: ["buynext.vercel.app", "http://localhost:5173"],
-  credentials: true,
-}));
+app.use(cors());
 
-
+// MongoDB Connection using .env
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("DB connected.."))
   .catch((err) => console.log(err));
 
-
+// Cart Schema
 const cartschema = mongoose.Schema({
   _id: Number,
   desc: String,
@@ -27,7 +24,7 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
-
+// User Details Schema
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -35,7 +32,7 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-
+// Order Schema
 const orderschema = mongoose.Schema(
   {
     userDetails: userSchema,
@@ -46,11 +43,11 @@ const orderschema = mongoose.Schema(
   { versionKey: false }
 );
 
-
+// Models
 const Cart = mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.model("ordermod", orderschema, "buynextorder");
 
-
+// CART ROUTES
 app.get("/cart", async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -91,6 +88,7 @@ app.delete("/cart/:id", async (req, res) => {
   }
 });
 
+// ORDER ROUTES
 app.get("/orders", async (req, res) => {
   try {
     const ordered = await Order.find();
@@ -112,7 +110,7 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-
+// SERVER START
 const PORT = process.env.PORT || 4000;
 app.listen(PORT,"0.0.0.0", () => {
   console.log(`Server started on port ${PORT}..`);
