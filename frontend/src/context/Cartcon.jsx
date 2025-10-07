@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+// Create context
 const Cartcon = createContext();
+export const useCart = () => useContext(Cartcon);
+
+// Helper for safe localStorage parsing
 const safeJSONParse = (key) => {
   try {
     const data = localStorage.getItem(key);
@@ -12,53 +16,53 @@ const safeJSONParse = (key) => {
   }
 };
 
-const API_URL = "buynext-backend.vercel.app";
+// Backend URL (deployed on Vercel)
+const API_URL = "https://buynext-backend.vercel.app";
 
 export const CartProvider = ({ children }) => {
+  // Wishlist state
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
-  const [cart, setCart] = useState(() => {
-    const storedcart = localStorage.getItem("cart");
-    return storedcart ? JSON.parse(storedcart) : [];
-  });
-
+  // Cart state
+  const [cart, setCart] = useState(() => safeJSONParse("cart"));
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
+  // Orders state
+  const [orders, setOrders] = useState(() => safeJSONParse("orders"));
+
+  // Fetch cart from backend
   const fetchCart = async () => {
     try {
-      const res = await fetch("http://localhost:4000/cart");
+      const res = await fetch(`${API_URL}/cart`);
       const data = await res.json();
-      console.log("Cart from server:", data);
       setCart(data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching cart:", err);
     }
   };
 
-  const [orders, setOrders] = useState(() => {
-    const storedOrder = localStorage.getItem("orders");
-    return storedOrder ? JSON.parse(storedOrder) : [];
-  });
-
+  // Fetch orders from backend
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:4000/orders");
+      const res = await fetch(`${API_URL}/orders`);
       const data = await res.json();
       setOrders(data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching orders:", err);
     }
   };
 
   useEffect(() => {
+    fetchCart();
     fetchOrders();
   }, []);
 
+  // Product list
   const allproducts = [
     {
       _id: 1,
@@ -118,40 +122,56 @@ export const CartProvider = ({ children }) => {
     },
   ];
 
-  // Add to cart
+  // Add product to cart
   const addtoCart = async (product) => {
-    setCart((prev) => {
-      const existing = prev.find((p) => p.pid === product._id);
-      if (existing) {
-        return prev.map((p) =>
-          p.pid === product._id ? { ...p, qty: p.qty + 1 } : p
-        );
-      } else {
-        return [...prev, { ...product, pid: product._id, qty: 1 }];
-      }
-    });
-
     const existing = cart.find((p) => p.pid === product._id);
+
     if (existing) {
-      await fetch(`http://localhost:4000/cart/${existing._id}`, {
+      setCart((prev) =>
+        prev.map((p) =>
+          p.pid === product._id ? { ...p, qty: p.qty + 1 } : p
+        )
+      );
+
+      // Update backend
+      await fetch(`${API_URL}/cart/${existing._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...existing, qty: existing.qty + 1 }),
       });
     } else {
-      await fetch("http://localhost:4000/cart", {
+      const newItem = { ...product, pid: product._id, qty: 1 };
+      setCart((prev) => [...prev, newItem]);
+
+      // Add to backend
+      await fetch(`${API_URL}/cart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...product, pid: product._id, qty: 1 }),
+        body: JSON.stringify(newItem),
       });
     }
   };
 
+  // Remove item from cart
   const removeFromCart = async (id) => {
-    await fetch(`http://localhost:4000/cart/${id}`, { method: "DELETE" });
+    await fetch(`${API_URL}/cart/${id}`, { method: "DELETE" });
     fetchCart();
   };
 
+  // Update quantity
+  const updateqty = async (id, qty) => {
+    const item = cart.find((p) => p._id === id);
+    if (!item) return;
+    const updated = { ...item, qty };
+    await fetch(`${API_URL}/cart/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+    fetchCart();
+  };
+
+  // Wishlist
   const addToWishlist = (product) => {
     setWishlist((prev) => {
       if (!prev.find((item) => item._id === product._id)) {
@@ -160,37 +180,23 @@ export const CartProvider = ({ children }) => {
       return prev;
     });
   };
-
   const removeFromWishlist = (id) => {
     setWishlist(wishlist.filter((item) => item._id !== id));
   };
 
-  const updateqty = async (id, qty) => {
-    const item = cart.find((p) => p._id === id);
-    if (!item) return;
-    const updated = { ...item, qty };
-    await fetch(`http://localhost:4000/cart/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    });
-    fetchCart();
-  };
-
-  // Existing placeorder
-  const placeorder = async (userDetails) => {
-    if (cart.length == 0) return;
+  // Place order with user details (works on any device)
+  const placeOrderWithUser = async (userDetails) => {
+    if (cart.length === 0) return;
 
     const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const newOrder = {
       userDetails,
-      id: Date.now(),
       items: cart,
       total,
       date: new Date().toLocaleString(),
     };
 
-    await fetch("http://localhost:4000/orders", {
+    await fetch(`${API_URL}/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newOrder),
@@ -198,29 +204,7 @@ export const CartProvider = ({ children }) => {
 
     fetchOrders();
     setCart([]);
-  };
-
-  // place order with user details
-  const placeOrderWithUser = async (userDetails) => {
-    if (cart.length === 0) return;
-
-    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-    const newOrder = {
-      userDetails, // attach user details
-      items: cart,
-      total,
-      date: new Date(),
-    };
-
-    await fetch("http://localhost:4000/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newOrder),
-    });
-
-    fetchOrders();
-    setCart([]);
+    localStorage.removeItem("cart");
   };
 
   return (
@@ -235,7 +219,6 @@ export const CartProvider = ({ children }) => {
         updateqty,
         removeFromCart,
         orders,
-        placeorder,
         placeOrderWithUser,
         allproducts,
       }}
@@ -244,5 +227,3 @@ export const CartProvider = ({ children }) => {
     </Cartcon.Provider>
   );
 };
-
-export const useCart = () => useContext(Cartcon);
