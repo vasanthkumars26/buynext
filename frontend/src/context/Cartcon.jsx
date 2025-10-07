@@ -13,6 +13,9 @@ const safeJSONParse = (key) => {
   }
 };
 
+// Use localhost API
+const API_URL = "http://localhost:4000";
+
 export const CartProvider = ({ children }) => {
   // Wishlist
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
@@ -32,7 +35,7 @@ export const CartProvider = ({ children }) => {
   // Fetch cart from server
   const fetchCart = async () => {
     try {
-      const res = await fetch("http://localhost:4000/cart");
+      const res = await fetch(`${API_URL}/cart`);
       const data = await res.json();
       setCart(data);
     } catch (err) {
@@ -43,7 +46,7 @@ export const CartProvider = ({ children }) => {
   // Fetch orders from server
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:4000/orders");
+      const res = await fetch(`${API_URL}/orders`);
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -75,7 +78,7 @@ export const CartProvider = ({ children }) => {
         const existing = prev.find((p) => p._id === product._id);
         if (existing) {
           // Update quantity
-          fetch(`http://localhost:4000/cart/${existing._id}`, {
+          fetch(`${API_URL}/cart/${existing._id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...existing, qty: existing.qty + 1 }),
@@ -86,7 +89,7 @@ export const CartProvider = ({ children }) => {
           );
         } else {
           // Add new item
-          fetch("http://localhost:4000/cart", {
+          fetch(`${API_URL}/cart`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...product, qty: 1 }),
@@ -103,7 +106,7 @@ export const CartProvider = ({ children }) => {
   // Remove from Cart
   const removeFromCart = async (id) => {
     try {
-      await fetch(`http://localhost:4000/cart/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/cart/${id}`, { method: "DELETE" });
       fetchCart();
     } catch (err) {
       console.error("Error removing cart item:", err);
@@ -116,7 +119,7 @@ export const CartProvider = ({ children }) => {
     if (!item) return;
     const updated = { ...item, qty };
     try {
-      await fetch(`http://localhost:4000/cart/${id}`, {
+      await fetch(`${API_URL}/cart/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
@@ -143,42 +146,41 @@ export const CartProvider = ({ children }) => {
 
   // Place Order
   const placeOrderWithUser = async (userDetails) => {
-  if (cart.length === 0) throw new Error("Cart is empty");
+    if (cart.length === 0) throw new Error("Cart is empty");
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  const newOrder = {
-    userDetails,
-    items: cart.map(item => ({
-      _id: item._id,
-      desc: item.desc,
-      price: item.price,
-      qty: item.qty,
-    })),
-    total,
-    date: new Date(),
-  };
+    const newOrder = {
+      userDetails,
+      items: cart.map(item => ({
+        _id: item._id,
+        desc: item.desc,
+        price: item.price,
+        qty: item.qty,
+      })),
+      total,
+      date: new Date(),
+    };
 
-  try {
-    const res = await fetch("http://localhost:4000/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newOrder),
-    });
+    try {
+      const res = await fetch(`${API_URL}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrder),
+      });
 
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || "Server error while placing order");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Server error while placing order");
+      }
+
+      fetchOrders();
+      setCart([]);
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
-
-    fetchOrders();
-    setCart([]);
-  } catch (err) {
-    console.error(err);
-    throw err; // rethrow so your CheckoutPage catches it
-  }
-};
-
+  };
 
   return (
     <Cartcon.Provider
