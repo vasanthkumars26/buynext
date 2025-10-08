@@ -1,20 +1,16 @@
-require('dotenv').config(); // Load .env variables at the top
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const connectDB = require("./utils/db");
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection using .env
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("DB connected.."))
-  .catch((err) => console.log(err));
+// Connect to MongoDB
+connectDB().then(() => console.log("✅ MongoDB Connected")).catch(err => console.error("MongoDB connection error:", err));
 
-// Cart Schema
+// Schemas
 const cartschema = mongoose.Schema({
   _id: Number,
   desc: String,
@@ -24,7 +20,6 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
-// User Details Schema
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -32,7 +27,6 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-// Order Schema
 const orderschema = mongoose.Schema(
   {
     userDetails: userSchema,
@@ -44,6 +38,7 @@ const orderschema = mongoose.Schema(
 );
 
 // Models
+const mongoose = require("mongoose");
 const Cart = mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.model("ordermod", orderschema, "buynextorder");
 
@@ -110,10 +105,5 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// SERVER START
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}..`);
-});
-
+// Export app for Vercel serverless
 module.exports = app;
