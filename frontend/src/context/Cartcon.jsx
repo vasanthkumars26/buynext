@@ -14,7 +14,7 @@ const safeJSONParse = (key) => {
 };
 
 // Use localhost API
-const API_URL = "https://your-backend.vercel.app";
+const API_URL = "https://buynext-backend.vercel.app";
 
 export const CartProvider = ({ children }) => {
   // Wishlist
