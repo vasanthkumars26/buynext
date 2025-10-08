@@ -1,32 +1,37 @@
-require('dotenv').config(); // Load .env variables at the top
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
 const app = express();
 
+
 app.use(express.json());
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",          
-      "https://buynext-hwn9.vercel.app" 
+      "http://localhost:5173",
+      process.env.APPLICATION_URL, 
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, 
+    credentials: true,
   })
 );
 
+// MongoDB Connection
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri) {
+  console.error("❌ MONGO_URI is not defined!");
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("DB connected.."))
-  .catch((err) => console.log(err));
+  .connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err.message));
 
-
-
-// Cart Schema
-const cartschema = mongoose.Schema({
+// Schemas
+const cartSchema = mongoose.Schema({
   _id: Number,
   desc: String,
   img: String,
@@ -35,7 +40,6 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
-
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -43,22 +47,20 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-
-const orderschema = mongoose.Schema(
+const orderSchema = mongoose.Schema(
   {
     userDetails: userSchema,
-    items: [cartschema],
+    items: [cartSchema],
     total: Number,
     date: { type: Date, default: Date.now },
   },
   { versionKey: false }
 );
 
+const Cart = mongoose.model("cartmod", cartSchema, "buynext");
+const Order = mongoose.model("ordermod", orderSchema, "buynextorder");
 
-const Cart = mongoose.model("cartmod", cartschema, "buynext");
-const Order = mongoose.model("ordermod", orderschema, "buynextorder");
-
-
+// Routes
 app.get("/cart", async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -94,11 +96,9 @@ app.delete("/cart/:id", async (req, res) => {
     await Cart.findByIdAndDelete(id);
     res.json({ message: "DELETED SUCCESSFULLY" });
   } catch (err) {
-    console.error("Delete error:", err);
     res.status(500).json({ message: err.message });
   }
 });
-
 
 app.get("/orders", async (req, res) => {
   try {
@@ -111,18 +111,14 @@ app.get("/orders", async (req, res) => {
 
 app.post("/orders", async (req, res) => {
   try {
-    console.log("Received Order:", req.body);
     const ord = new Order(req.body);
-    const savedord = await ord.save();
-    res.status(201).json(savedord);
+    const savedOrd = await ord.save();
+    res.status(201).json(savedOrd);
   } catch (err) {
-    console.error("Error saving order:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-
+// Start Server
 const PORT = process.env.PORT || 4000;
-app.listen(PORT,"0.0.0.0", () => {
-  console.log(`Server started on port ${PORT}..`);
-});
+app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));
