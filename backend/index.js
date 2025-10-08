@@ -7,7 +7,7 @@ const app = express();
 
 // CORS setup for frontend
 const corsOptions = {
-  origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], // your frontend URL
+  origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], // your frontend URLs
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -27,14 +27,24 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serverless-safe MongoDB connection
+let cached = global.mongoose;
+if (!cached) cached = global.mongoose = { conn: null, promise: null };
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    bufferCommands: false,
-    dbName: "buynext"
-  })
-  .then(() => console.log("DB connected.."))
-  .catch((err) => console.log(err));
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI, {
+      bufferCommands: true, // allow queries to wait until connection
+      dbName: "buynext"
+    }).then(m => m);
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// Connect DB immediately
+connectDB().then(() => console.log("✅ MongoDB Connected")).catch(err => console.error(err));
 
 // Cart Schema
 const cartschema = mongoose.Schema({
@@ -54,7 +64,7 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-
+// Order Schema
 const orderschema = mongoose.Schema(
   {
     userDetails: userSchema,
@@ -65,11 +75,11 @@ const orderschema = mongoose.Schema(
   { versionKey: false }
 );
 
-
+// Models (singleton for serverless)
 const Cart = mongoose.models.Cart || mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.models.Order || mongoose.model("ordermod", orderschema, "buynextorder");
 
-
+// CART ROUTES
 app.get("/cart", async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -110,7 +120,7 @@ app.delete("/cart/:id", async (req, res) => {
   }
 });
 
-
+// ORDER ROUTES
 app.get("/orders", async (req, res) => {
   try {
     const ordered = await Order.find();
@@ -132,13 +142,12 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-
+// Only listen locally (Vercel ignores this)
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}..`);
   });
 }
-
 
 module.exports = app;
