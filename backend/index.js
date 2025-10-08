@@ -21,14 +21,14 @@ app.use(
 // MongoDB Connection
 const mongoUri = process.env.MONGO_URI;
 if (!mongoUri) {
-  console.error("❌ MONGO_URI is not defined!");
+  console.error(" MONGO_URI is not defined!");
   process.exit(1);
 }
 
 mongoose
   .connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err.message));
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB Connection Error:", err.message));
 
 // Schemas
 const cartSchema = mongoose.Schema({
@@ -119,6 +119,6 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// Start Server
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));

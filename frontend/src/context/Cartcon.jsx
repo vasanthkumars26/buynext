@@ -13,7 +13,6 @@ const safeJSONParse = (key) => {
   }
 };
 
-// Use localhost API
 const API_URL = "http://localhost:4000";
 
 export const CartProvider = ({ children }) => {
