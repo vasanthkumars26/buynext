@@ -5,22 +5,25 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+// Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: "*", 
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, 
-  })
-);
 
-// MongoDB Connection using .env
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("DB connected.."))
-  .catch((err) => console.log(err));
+// CORS setup: allow all origins
+app.use(cors()); // simpler and works for all origins
 
-// Cart Schema
+// MongoDB Connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI); 
+    console.log("✅ MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+};
+connectDB();
+
+// Schemas
 const cartschema = mongoose.Schema({
   _id: Number,
   desc: String,
@@ -30,7 +33,6 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
-// User Details Schema
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -38,7 +40,6 @@ const userSchema = mongoose.Schema({
   address: String,
 });
 
-// Order Schema
 const orderschema = mongoose.Schema(
   {
     userDetails: userSchema,
@@ -121,3 +122,5 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}..`);
 });
+
+module.exports = app; 
