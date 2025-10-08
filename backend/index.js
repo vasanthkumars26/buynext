@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// CORS setup for frontend
+// CORS setup
 const corsOptions = {
-  origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], // your frontend URLs
+  origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -16,7 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Safe OPTIONS handling for Express v5
+// Handle preflight requests
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", corsOptions.origin.join(","));
@@ -35,7 +35,7 @@ async function connectDB() {
   if (cached.conn) return cached.conn;
   if (!cached.promise) {
     cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: true, // allow queries to wait until connection
+      bufferCommands: true, 
       dbName: "buynext"
     }).then(m => m);
   }
@@ -43,7 +43,7 @@ async function connectDB() {
   return cached.conn;
 }
 
-// Connect DB immediately
+// Connect immediately
 connectDB().then(() => console.log("✅ MongoDB Connected")).catch(err => console.error(err));
 
 // Cart Schema
@@ -75,7 +75,7 @@ const orderschema = mongoose.Schema(
   { versionKey: false }
 );
 
-// Models (singleton for serverless)
+// Models
 const Cart = mongoose.models.Cart || mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.models.Order || mongoose.model("ordermod", orderschema, "buynextorder");
 
@@ -142,7 +142,7 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// Only listen locally (Vercel ignores this)
+// Local only
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {
