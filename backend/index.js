@@ -5,12 +5,34 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+// CORS setup for frontend
+const corsOptions = {
+  origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], // your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
+
+// Safe OPTIONS handling for Express v5
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", corsOptions.origin.join(","));
+    res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
+    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    bufferCommands: false,
+    dbName: "buynext"
+  })
   .then(() => console.log("DB connected.."))
   .catch((err) => console.log(err));
 
@@ -24,7 +46,7 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
-
+// User Schema
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -43,9 +65,10 @@ const orderschema = mongoose.Schema(
   { versionKey: false }
 );
 
-// Models
-const Cart = mongoose.model("cartmod", cartschema, "buynext");
-const Order = mongoose.model("ordermod", orderschema, "buynextorder");
+
+const Cart = mongoose.models.Cart || mongoose.model("cartmod", cartschema, "buynext");
+const Order = mongoose.models.Order || mongoose.model("ordermod", orderschema, "buynextorder");
+
 
 app.get("/cart", async (req, res) => {
   try {
@@ -110,9 +133,12 @@ app.post("/orders", async (req, res) => {
 });
 
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}..`);
-});
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}..`);
+  });
+}
 
-module.exports=app;
+
+module.exports = app;
