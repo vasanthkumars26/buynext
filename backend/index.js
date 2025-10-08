@@ -1,16 +1,20 @@
-require("dotenv").config();
+require('dotenv').config(); 
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./utils/db");
+const mongoose = require("mongoose");
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
 
-// Connect to MongoDB
-connectDB().then(() => console.log("✅ MongoDB Connected")).catch(err => console.error("MongoDB connection error:", err));
 
-// Schemas
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("DB connected.."))
+  .catch((err) => console.log(err));
+
+// Cart Schema
 const cartschema = mongoose.Schema({
   _id: Number,
   desc: String,
@@ -20,12 +24,14 @@ const cartschema = mongoose.Schema({
   category: String,
 });
 
+
 const userSchema = mongoose.Schema({
   name: String,
   email: String,
   phone: String,
   address: String,
 });
+
 
 const orderschema = mongoose.Schema(
   {
@@ -38,11 +44,9 @@ const orderschema = mongoose.Schema(
 );
 
 // Models
-const mongoose = require("mongoose");
 const Cart = mongoose.model("cartmod", cartschema, "buynext");
 const Order = mongoose.model("ordermod", orderschema, "buynextorder");
 
-// CART ROUTES
 app.get("/cart", async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -83,7 +87,7 @@ app.delete("/cart/:id", async (req, res) => {
   }
 });
 
-// ORDER ROUTES
+
 app.get("/orders", async (req, res) => {
   try {
     const ordered = await Order.find();
@@ -105,5 +109,10 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-// Export app for Vercel serverless
-module.exports = app;
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}..`);
+});
+
+module.exports=app;
