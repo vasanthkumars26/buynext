@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  FaArrowLeft,
-  FaArrowRight,
   FaClock,
   FaMoneyBillWave,
   FaRocket,
@@ -158,7 +156,6 @@ const Home = () => {
         ))}
       </div>
 
-      {/* Additional Component */}
       <Belhome />
     </div>
   );

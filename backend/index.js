@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// CORS setup
 const corsOptions = {
   origin: ["http://localhost:5174","https://buynext-hwn9.vercel.app"], 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -16,7 +15,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Handle preflight requests
+
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", corsOptions.origin.join(","));
@@ -27,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serverless-safe MongoDB connection
+
 let cached = global.mongoose;
 if (!cached) cached = global.mongoose = { conn: null, promise: null };
 
@@ -43,8 +42,8 @@ async function connectDB() {
   return cached.conn;
 }
 
-// Connect immediately
-connectDB().then(() => console.log("✅ MongoDB Connected")).catch(err => console.error(err));
+
+connectDB().then(() => console.log("MongoDB Connected")).catch(err => console.error(err));
 
 // Cart Schema
 const cartschema = mongoose.Schema({

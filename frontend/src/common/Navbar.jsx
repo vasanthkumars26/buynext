@@ -33,7 +33,7 @@ const Navbar = () => {
     useEffect(() => {
         window.scrollTo(0, 0)
         auth.onAuthStateChanged((user) => {
-            if (user) {
+            if (user){
                 navigate("/home")
                 setLog(true)
             }
@@ -43,6 +43,7 @@ const Navbar = () => {
     const logout = () => {
         signOut(auth).then((res) => {
             setLog(false)
+            navigate("/")
         }).catch((err) => {
             console.log(err)
         })
@@ -88,14 +89,14 @@ const Navbar = () => {
 
                 <div className="hidden gap-16 items-center  lg:flex">
 
-                    <div className="relative group">
+                    {log && <div className="relative group">
                         <Link to="/">
                             <FaHome className="text-2xl" />
                         </Link>
                         <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             Home
                         </span>
-                    </div>
+                    </div>}
 
                     {log && <div className="relative group">
                         <Link to="/wishlist" className='flex'>
@@ -116,14 +117,14 @@ const Navbar = () => {
                     </div>}
 
 
-                    <div className="relative group">
+                    {log&& <div className="relative group">
                         <Link to="/blogs">
                             <FaAddressCard className="text-2xl" />
                         </Link>
                         <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             Blogs
                         </span>
-                    </div>
+                    </div>}
 
                     {log && (
                         <div className='bg-green-200 p-2 rounded-xl' >
