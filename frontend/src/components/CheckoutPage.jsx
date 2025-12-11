@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../context/Cartcon";
 import { useNavigate } from "react-router-dom";
+import AppTheme from "../common/Apptheme";
 
 const CheckoutPage = () => {
   const { cart, placeOrderWithUser } = useCart();
@@ -23,7 +24,7 @@ const CheckoutPage = () => {
     try {
       await placeOrderWithUser(formData); 
       navigate("/ordersuccess");
-      alert("🚀Order Placed Successfully!")
+      alert("🚀 Order Placed Successfully!");
     } catch (err) {
       console.error("Error:", err);
       alert("Server Error. Try again later.");
@@ -31,65 +32,70 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-[20%] sm:mt-[12%] md:mt-[9%] p-6 border rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Checkout</h2>
+  <AppTheme> <div className="min-h-screen flex items-center justify-center bg-gradient-to-br p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-10">
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-indigo-700">
+          Checkout
+        </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-semibold">Full Name</label>
-          <input
-            type="text"
-            name="name"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+        <form onSubmit={handleSubmit}  className="text-black space-y-5">
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
+            />
+          </div>
 
-        <div>
-          <label className="block font-semibold">Email</label>
-          <input
-            type="email"
-            name="email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
+            />
+          </div>
 
-        <div>
-          <label className="block font-semibold">Phone</label>
-          <input
-            type="tel"
-            name="phone"
-            required
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Phone</label>
+            <input
+              type="tel"
+              name="phone"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
+            />
+          </div>
 
-        <div>
-          <label className="block font-semibold">Address</label>
-          <textarea
-            name="address"
-            required
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full border rounded px-3 py-2"
-          />
-        </div>
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">Address</label>
+            <textarea
+              name="address"
+              required
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition resize-none"
+              rows={4}
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-        >
-          Place Order
-        </button>
-      </form>
-    </div>
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition"
+          >
+            Place Order
+          </button>
+        </form>
+      </div>
+    </div></AppTheme> 
   );
 };
 

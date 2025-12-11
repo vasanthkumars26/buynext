@@ -1,80 +1,120 @@
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
-import React, { useEffect, useState } from 'react'
-import { Link,useLocation, useNavigate } from 'react-router-dom'
-import auth from '../../config/firebase'
+// frontend/src/components/Login.jsx
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "../../config/firebase";
+
+// IMPORTANT: adjust path if your theme file name differs (Apptheme vs AppTheme)
+import AppTheme, { GlassCard, CTAButton, AccentText } from "../common/Apptheme";
 
 const Login = () => {
+  const location = useLocation();
+  const passedname = location.state?.name || "";
 
-const location = useLocation()
-  const passedname = location.state?.name || ""
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [name, setName] = useState(passedname);
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [err, setErr] = useState("");
 
-  const [name,setName] = useState(passedname)
-  const [email,setEmail] = useState('')
-  const [pass,setPass] = useState('')
-  const [err,setErr] = useState('')
-  
-useEffect(()=>{
-  window.scrollTo(0,0)
+  useEffect(() => {
+    window.scrollTo(0, 0);
 
-  auth.onAuthStateChanged((user)=>{
-    if(user){
-      navigate("/home")
-    }
-  })
-},[])
+    // keep exactly the same auth logic you had
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigate("/home");
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handlelogin = (e)=>{
-    e.preventDefault()
+  const handlelogin = (e) => {
+    e.preventDefault();
 
-    signInWithEmailAndPassword(auth,email,pass).then((res)=>{
-      navigate("/home")
-      console.log("User Logged in!")
-  }).catch((err)=>{
-    setErr("Passwords mismatch..")
-    console.log("Error Logging in..",err)
-  })
-  }
+    signInWithEmailAndPassword(auth, email, pass)
+      .then((res) => {
+        navigate("/home");
+        console.log("User Logged in!");
+      })
+      .catch((err) => {
+        setErr("Passwords mismatch..");
+        console.log("Error Logging in..", err);
+      });
+  };
 
   return (
-    <div className='mt-[28%] md:mt-[8%]'>
-      <form onSubmit={handlelogin}>
-        <h2 className='mb-5 text-3xl font-bold p-2 ' >Hey {name}!You Can Login Here👇🏼</h2>
+    // If you already wrap your app with <AppTheme> globally, you can remove the outer AppTheme wrapper
+   
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
+        <GlassCard className="max-w-md w-full">
+          <form onSubmit={handlelogin} className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-extrabold">
+              Hey <AccentText>{name || "there"}</AccentText>!{" "}
+              <span className="text-white/80">You can login here👇🏼</span>
+            </h2>
 
-        <div className='flex flex-col text-start ml-[30%]'> 
-        <label  className='text-start '>Name:</label>
-        <input value={name} onChange={(e)=>setName(e.target.value)} type="text" 
-        placeholder='Name..' className='outline-none p-2  border border-gray-200
-         rounded-xl w-[60%]' required/><br/><br />
-       </div>
+            <div>
+              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
+                Name
+              </label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Name.."
+                required
+                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
+              />
+            </div>
 
-        <div className='flex flex-col text-start ml-[30%] '> 
-        <label  className='text-start '>Email:</label>
-        <input value={email} onChange={(e)=>setEmail(e.target.value)} type="text" 
-        placeholder='Email..' className='outline-none p-2  border border-gray-200
-         rounded-xl w-[60%]' required/><br/><br />
-       </div>
+            <div>
+              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
+                Email
+              </label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Email.."
+                required
+                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
+              />
+            </div>
 
-       <div className='flex flex-col text-start ml-[30%] '>
-        <label className='text-start'>Password:</label>
-        <input value={pass} onChange={(e)=>setPass(e.target.value)} type="text"
-         placeholder='Password..'className='outline-none p-2 border border-gray-200 
-         rounded-xl w-[60%]' required/><br/><br />
-       </div>
+            <div>
+              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
+                Password
+              </label>
+              <input
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                type="password"
+                placeholder="Password.."
+                required
+                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
+              />
+            </div>
 
-        {err && <p className='text-red-500 mt-2 animate-pulse' >{err}</p>}
+            {err && <p className="text-red-400 mt-1 animate-pulse">{err}</p>}
 
-          <button type='submit' className=' mt-4 bg-gradient-to-r
-           from-green-300 to-green-500 hover:from-green-500 hover:to-green-300 p-2 
-           rounded-md' >Login</button>
-      
-      </form>
+            <div className="flex items-center justify-between gap-4">
+              <CTAButton type="submit">Login</CTAButton>
 
-        <p>Don't have an account? <Link to="/signup" className='text-blue-500 underline' >Register here!</Link></p>
-    </div>
+            </div>
+              <Link
+                to="/signup"
+                className="text-sm text-white/80 hover:text-white  ml-auto"
+              >
+                Don't have an account?{" "}
+                <span className="text-cyan-300 underline font-semibold">Register here!</span>
+              </Link>
+          </form>
+        </GlassCard>
+      </div>
+    
+  );
+};
 
-  )
-}
-
-export default Login
+export default Login;

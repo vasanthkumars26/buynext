@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AppTheme from "../common/Apptheme";
 
 const Blogs = () => {
   
@@ -27,24 +28,24 @@ const Blogs = () => {
   ]);
 
   return (
-    <div className="max-w-6xl mx-auto p-6 sm:mt-[10%] md:mt-[8%]">
+   <div className="max-w-6xl mx-auto p-6 sm:mt-[10%] md:mt-[8%]">
       <h1 className="text-3xl font-bold mb-6 text-center">Our Blogs</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {blogs.map((blog) => (
           <div
             key={blog._id}
-            className="border rounded-lg shadow-md hover:shadow-xl transition-shadow bg-white"
+            className="border rounded-lg shadow-md hover:shadow-xl transition-shadow bg-gradient-to-b from-indigo-500 to-cyan-400"
           >
             <img
               src={blog.img}
               alt={blog.title}
               className="w-full h-48 object-cover rounded-t-lg"
             />
-            <div className="p-4">
+            <div className="p-4 text-black">
               <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
               <p className="text-gray-600 text-sm">{blog.content}</p>
-              <button className="mt-3 text-green-700 font-semibold hover:underline">
+              <button className="mt-3 text-indigo-700 font-semibold hover:underline">
                 Read More
               </button>
             </div>

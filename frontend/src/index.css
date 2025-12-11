@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* prevent horizontal scroll globally */
+html, body, #root {
+  overflow-x: hidden;
+}
+
+/* make the theme container clip children (blobs) */
+.app-theme-wrapper {
+  position: relative;
+  overflow-x: hidden;    /* clip any horizontal overflow */
+}
+
+/* ensure images and cards never exceed their container */
+img, .card img, .product-card img {
+  max-width: 100%;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  box-sizing: border-box;
+}
+    

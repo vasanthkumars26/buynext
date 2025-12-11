@@ -1,11 +1,10 @@
+// frontend/src/components/Home.jsx
 import React, { useState, useEffect } from "react";
-import {
-  FaClock,
-  FaMoneyBillWave,
-  FaRocket,
-} from "react-icons/fa";
+import { FaClock, FaMoneyBillWave, FaRocket } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Belhome from "./Belhome";
+import AppTheme, { GlassCard, CTAButton, AccentText } from "../common/Apptheme";
+
 
 const Home = () => {
   const images = [
@@ -70,93 +69,134 @@ const Home = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      nextSlide(); // Autoplay forward instead of backward
+      nextSlide(); // Autoplay forward
     }, 3000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto mt-[40%] md:mt-[10%] px-2 sm:px-6">
-      
-      <img
-        src={images[current]}
-        alt="carousel"
-        className="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover rounded-lg shadow-lg transition-all duration-500"
-      />
+    
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+      {/* hero area */}
+      <div className="relative mt-[40%] md:mt-[10%]">
+        <img
+          src={images[current]}
+          alt="carousel"
+          className="w-full h-[300px] sm:h-[380px] md:h-[480px] lg:h-[620px] object-cover rounded-xl shadow-2xl transition-all duration-700"
+        />
 
-      
-     <motion.div
-  className={`absolute top-16 sm:top-24 md:top-32 lg:top-40 
-    ${current === 0 || current === images.length - 1 ? "right-4 sm:right-8 md:right-16 lg:right-24 text-right" : "left-4 sm:left-8 md:left-16 lg:left-24 text-left"} 
-    bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-black`}
-  key={current}
-  initial={{ opacity: 0, x: 50 }}
-  animate={{ opacity: 1, x: 0 }}
-  exit={{ opacity: 0, x: -50 }}
-  transition={{ duration: 0.8, ease: "easeInOut" }}
->
-  <p className="text-sm sm:text-lg md:text-3xl lg:text-5xl font-bold">
-    {desc[current].stitle}
-  </p>
-  <h1 className="mt-2 sm:mt-4 text-xs sm:text-base md:text-xl lg:text-2xl font-semibold">
-    {desc[current].title}
-  </h1>
-  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6 justify-end">
-    <button className="bg-gradient-to-r from-purple-900 to-green-900 text-gray-300 border p-2 text-xs sm:text-sm md:text-lg hover:-translate-y-0.5 transition-transform rounded">
-      {desc[current].btn1}
-    </button>
-    <button className="bg-gradient-to-r from-green-900 to-purple-900 text-gray-300 border p-2 text-xs sm:text-sm md:text-lg hover:-translate-y-0.5 transition-transform rounded">
-      {desc[current].btn2}
-    </button>
-  </div>
-</motion.div>
+        {/* Overlay content (glass card) with stronger contrast */}
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 18 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className={`absolute top-8 sm:top-12 md:top-16 lg:top-20
+            ${current === 0 || current === images.length - 1 ? "right-4 sm:right-8 md:right-12 lg:right-16 text-right" : "left-4 sm:left-8 md:left-12 lg:left-16 text-left"}
+            bg-black/50 glass-strong border border-white/12 rounded-2xl p-5 md:p-8 max-w-xs sm:max-w-sm md:max-w-md`}
+        >
+          <p className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-bold text-white drop-shadow-lg">
+            {desc[current].stitle}
+          </p>
+          <h1 className="mt-2 sm:mt-3 text-sm sm:text-lg md:text-xl lg:text-2xl font-semibold text-white drop-shadow-lg">
+            {desc[current].title}
+          </h1>
 
+          <div className="flex flex-row sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6 justify-end">
+            <button className="px-3 py-2 rounded-xl text-sm sm:text-base font-semibold bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 shadow hover:-translate-y-0.5 transition-transform">
+              {desc[current].btn1}
+            </button>
+            <button className="px-3 py-2 rounded-xl text-sm sm:text-base font-semibold bg-white/8 text-white/95 border border-white/12 shadow hover:-translate-y-0.5 transition-transform">
+              {desc[current].btn2}
+            </button>
+          </div>
+        </motion.div>
 
-      {/* Navigation Arrows */}
-      {/* <button
-        onClick={prevSlide}
-        className="absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full hover:bg-gray-600 transition"
-      >
-        <FaArrowLeft />
-      </button>
+        {/* Left / Right arrow controls for accessibility */}
+        <button
+          onClick={prevSlide}
+          aria-label="previous"
+          className="hidden md:flex items-center justify-center absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full glass border border-white/8 hover:scale-105 transition"
+        >
+          ‹
+        </button>
+        <button
+          onClick={nextSlide}
+          aria-label="next"
+          className="hidden md:flex items-center justify-center absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full glass border border-white/8 hover:scale-105 transition"
+        >
+          ›
+        </button>
+      </div>
 
-      <button
-        onClick={nextSlide}
-        className="absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full hover:bg-gray-600 transition"
-      >
-        <FaArrowRight />
-      </button> */}
-
-      {/* Carousel Dots */}
+      {/* Dots */}
       <div className="flex justify-center mt-4 space-x-2">
         {images.map((_, idx) => (
-          <span
+          <button
             key={idx}
-            className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${
-              idx === current ? "bg-green-700" : "bg-gray-300"
-            }`}
+            aria-label={`go to slide ${idx + 1}`}
+            className={`w-3 h-3 rounded-full transition-colors focus:outline-none ${idx === current ? "bg-cyan-300" : "bg-white/30"}`}
             onClick={() => setCurrent(idx)}
-          ></span>
+          />
         ))}
       </div>
 
-      {/* Footer Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-8 px-2">
-        {imagefooter.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-600 to-gray-600 rounded-lg shadow-md"
-          >
-            <div className="text-3xl sm:text-4xl">{item.icon}</div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold">{item.heading}</h2>
-              <p className="text-sm sm:text-base">{item.subhead}</p>
-            </div>
-          </div>
-        ))}
+      {/* Footer cards */}
+      <div className="
+  grid 
+  grid-cols-1 
+  xs:grid-cols-1 
+  sm:grid-cols-2 
+  md:grid-cols-3 
+  lg:grid-cols-4 
+  xl:grid-cols-4 
+  gap-4 
+  mt-8 
+  px-2
+">
+  {imagefooter.map((item, idx) => (
+    <div
+      key={idx}
+      className="
+        flex 
+        items-center 
+        gap-4 
+        p-4 
+        rounded-xl 
+        glass 
+        border 
+        border-white/8 
+        shadow-sm
+      "
+    >
+      <div className="text-3xl sm:text-4xl lg:text-5xl text-cyan-300">
+        {item.icon}
       </div>
 
-      <Belhome />
+      <div>
+        <h2 className="text-base sm:text-lg md:text-xl font-bold text-white/95">
+          {item.heading}
+        </h2>
+        <p className="text-xs sm:text-sm md:text-base text-white/80">
+          {item.subhead}
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
+
+
+      {/* Belhome component (keeps same) */}
+      <div className="mt-8">
+        <Belhome />
+      </div>
+
+      {/* Small inline glass styles for immediate consistency */}
+      <style>{`
+        .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(6px); }
+        .glass-strong { background: rgba(0,0,0,0.45); backdrop-filter: blur(8px); border-radius: 1rem; }
+      `}</style>
     </div>
   );
 };

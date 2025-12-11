@@ -17,12 +17,13 @@ import Footer from './common/Footer'
 import Wishlist from './components/Wishlist'
 import Blogs from './components/Blogs'
 import CheckoutPage from './components/CheckoutPage'
+import Apptheme from './common/Apptheme'
 
 
 function App() {
 
   return (
-    <div>
+  <Apptheme>  <div>
       <CartProvider>
       <HashRouter>
             <Navbar/>
@@ -43,7 +44,7 @@ function App() {
       </HashRouter>
       </CartProvider>
      
-    </div>
+    </div></Apptheme>
   )
 }
 

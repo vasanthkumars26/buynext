@@ -67,7 +67,7 @@ export const CartProvider = ({ children }) => {
     { _id: 4, img: "https://lacozt.myshopify.com/cdn/shop/products/Product12_90960967-e37e-4f11-ab69-4e876a3704ff.jpg?v=1597047912", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps" },
     { _id: 5, img: "https://lacozt.myshopify.com/cdn/shop/products/PulloverHoodie.jpg?v=1681801550&width=360", desc: "Pull Over Hoodie", price: 12.47, category: "Hoodies" },
     { _id: 6, img: "https://lacozt.myshopify.com/cdn/shop/products/Women_sRibbedT-Shirt3.jpg?v=1680848975&width=360", desc: "Women's Ribbed T-Shirt", price: 19.37, category: "T-Shirts" },
-    { _id: 7, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg?v=1680848440&width=360", desc: "Men's Sweat Pullover Hoodie", price: 13.67, category: "Hoodies" },
+    { _id: 7, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg?v=1680848440&width=360", desc: "Men's Pullover Hoodie", price: 13.67, category: "Hoodies" },
     { _id: 8, img: "https://lacozt.myshopify.com/cdn/shop/products/PerformanceT-Shirt3.jpg?v=1680848622&width=360", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts" },
   ];
 
