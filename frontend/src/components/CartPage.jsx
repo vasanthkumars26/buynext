@@ -17,14 +17,14 @@ const CartPage = () => {
 
   if (cart.length === 0) {
     return (
-      <h2 className="text-center mt-[28%] md:mt-[10%] text-xl text-white/90">
+      <h2 className="text-center mt-[34%] md:mt-[10%] text-xl text-white/90">
         Your cart is empty
       </h2>
     );
   }
 
   return (
-    <div className="max-w-5xl mt-[24%] mx-auto sm:mt-[14%] md:mt-[9%] lg:mt-[8%] px-4">
+    <div className="max-w-5xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] lg:mt-[10%] px-4">
       <h1 className="text-3xl font-extrabold mb-6 text-white">Your Cart</h1>
 
       <div className="space-y-6">

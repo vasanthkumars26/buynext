@@ -28,7 +28,7 @@ const Blogs = () => {
   ]);
 
   return (
-   <div className="max-w-6xl mx-auto p-6 sm:mt-[10%] md:mt-[8%]">
+   <div className="max-w-6xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] lg:mt-[10%]">
       <h1 className="text-3xl font-bold mb-6 text-center">Our Blogs</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -81,18 +81,54 @@ const Navbar = () => {
         className={`fixed ${banner ? "top-10" : "top-0"} left-0 z-40 w-full flex items-center justify-between md:justify-around glass border-b border-white/10 shadow-lg px-4 py-3`}
       >
         {/* menu toggle (mobile) */}
-        <div className="mr-2 lg:hidden md:block">
-          <button aria-label="Open menu" onClick={() => setMenuOpen(true)} className="text-white">
-            <FaBars className="cursor-pointer text-xl" />
-          </button>
-        </div>
+       {/* Logo + Menu + Mobile Search */}
+<div className="flex flex-col md:flex-row items-start md:items-center w-full md:w-auto">
 
-        {/* logo */}
-        <div>
-          <Link to="/home" className="mr-2 text-2xl font-bold inline-flex items-center gap-2">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-400">BuyNext</span>
-          </Link>
-        </div>
+  {/* top row: menu + logo */}
+  <div className="flex items-center w-full md:w-auto mb-2 md:mb-0">
+    <div className="mr-2 lg:hidden md:block">
+      <button aria-label="Open menu" onClick={() => setMenuOpen(true)} className="text-white">
+        <FaBars className="cursor-pointer text-xl" />
+      </button>
+    </div>
+
+    {/* logo */}
+    <div>
+      <Link to="/home" className="mr-2 text-2xl font-bold inline-flex items-center gap-2">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-400">
+          BuyNext
+        </span>
+      </Link>
+    </div>
+  </div>
+
+  {/* MOBILE SEARCH BAR — now inside the same container */}
+  <div className="md:hidden w-full">
+    <div className="w-full flex items-center gap-2 mt-1">
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Search products..."
+        className="w-full rounded-2xl p-3 text-black outline-none bg-white/6 placeholder-white/60 border border-white/8 text-sm"
+      />
+      <button
+        onClick={handlesearchbtn}
+        disabled={!search.trim()}
+        className={`px-3 py-2 rounded-2xl text-sm font-semibold ${
+          !search.trim()
+            ? "opacity-40 cursor-not-allowed"
+            : "bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 hover:scale-105"
+        }`}
+      >
+        Search
+      </button>
+    </div>
+  </div>
+
+</div>
+
 
         {/* desktop search (only visible md+) */}
         {log && (
@@ -114,6 +150,7 @@ const Navbar = () => {
             </button>
           </div>
         )}
+        
 
         {/* icon group (desktop lg+) */}
         <div className="hidden lg:flex items-center gap-8">
@@ -193,29 +230,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* MOBILE SEARCH BAR (visible on small screens, hidden on md+) */}
-      <div className="md:hidden px-4 py-2 bg-transparent" style={{ marginTop: banner ? 56 : 0 }}>
-        <div className="w-full flex items-center gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search products..."
-            className="w-full rounded-2xl p-3 outline-none bg-white/6 placeholder-white/60 border border-white/8 text-sm"
-            aria-label="Mobile search"
-          />
-          <button
-            onClick={handlesearchbtn}
-            disabled={!search.trim()}
-            className={`px-3 py-2 rounded-2xl text-sm font-semibold ${!search.trim() ? "opacity-40 cursor-not-allowed" : "bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 hover:scale-105"}`}
-            aria-label="Mobile search button"
-          >
-            Search
-          </button>
-        </div>
-      </div>
-
+      
       {/* Backdrop (when menu open) */}
       {menuOpen && (
         <div

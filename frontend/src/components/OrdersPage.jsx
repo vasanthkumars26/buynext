@@ -10,7 +10,7 @@ const OrdersPage = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto sm:mt-[10%] md:mt-[9%] lg:mt-[10%] ">
+    <div className="max-w-5xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] lg:mt-[10%]  ">
       <h1 className="text-3xl font-bold mb-6 text-white">
         Your Orders
       </h1>
