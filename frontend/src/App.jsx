@@ -1,60 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import {Routes,Route, HashRouter} from 'react-router-dom'
-import Login from './components/Login'
-import Signup from './components/Signup'
-import Home from './components/Home'
-import Navbar from './common/Navbar'
-import About from './admin/AdminBlogs'
-import CartPage from './components/CartPage'
-import { CartProvider } from './context/Cartcon'
-import OrdersPage from './components/OrdersPage'
-import OrderSuccess from './components/OrderSuccess'
-import SearchPage from './components/SearchPage'
-import Footer from './common/Footer'
-import Wishlist from './components/Wishlist'
-import Blogs from './admin/AdminBlogs'
-import CheckoutPage from './components/CheckoutPage'
-import Apptheme from './common/Apptheme'
-import ProductDetails from './components/Productdetails'
-import AdminDashboard from './admin/AdminDashboard'
-import AdminProducts from './admin/AdminProducts'
-import AdminBlogs from './admin/AdminBlogs'
+// src/App.jsx
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import { Routes, Route, HashRouter } from "react-router-dom";
 
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Home from "./components/Home";
+import Navbar from "./common/Navbar";
+import About from "./admin/AdminBlogs";
+import CartPage from "./components/CartPage";
+import { CartProvider } from "./context/Cartcon";
+import OrdersPage from "./components/OrdersPage";
+import OrderSuccess from "./components/OrderSuccess";
+import SearchPage from "./components/SearchPage";
+import Footer from "./common/Footer";
+import Wishlist from "./components/Wishlist";
+import Blogs from "./admin/AdminBlogs";
+import CheckoutPage from "./components/CheckoutPage";
+import Apptheme from "./common/Apptheme";
+import ProductDetails from "./components/ProductDetails";
+import AdminDashboard from "./admin/AdminDashboard";
+import AdminProducts from "./admin/AdminProducts";
+import AdminBlogs from "./admin/AdminBlogs";
 
 function App() {
-
   return (
-  <Apptheme>  <div className=''>
-      <CartProvider>
-      <HashRouter>
-            <Navbar/>
-          <Routes>
-            <Route path='/' element={<Login/>} />
-            <Route path='/login' element={<Login/>} />
-            <Route path='/signup' element={<Signup/>} />
-            <Route path='/home' element={<Home/>} />
-            <Route path='/wishlist' element={<Wishlist/>} />
-            <Route path='/cart' element={<CartPage/>} />
-            <Route path='/blogs' element={<Blogs/>} />
-             <Route path="/orders" element={<OrdersPage />} />
-             <Route path="/ordersuccess" element={<OrderSuccess />} />
-             <Route path="/search" element={<SearchPage />} />
-             <Route path="/checkout" element={<CheckoutPage/>} />
-             <Route path="/product/:id" element={<ProductDetails/>} />
-             <Route path="/admin" element={<AdminDashboard/>} />
-             <Route path="/admin/products" element={<AdminProducts />} />
+    <Apptheme>
+      <div className="">
+        <CartProvider>
+          <HashRouter>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/blogs" element={<Blogs />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/ordersuccess" element={<OrderSuccess />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              {/* Product details route expects :id param */}
+              <Route path="/product/:id" element={<ProductDetails />} />
+              {/* Admin routes */}
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/blogs" element={<AdminBlogs />} />
-
-          </Routes>
-          <Footer/>
-      </HashRouter>
-      </CartProvider>
-     
-    </div></Apptheme>
-  )
+            </Routes>
+            <Footer />
+          </HashRouter>
+        </CartProvider>
+      </div>
+    </Apptheme>
+  );
 }
 
-export default App
+export default App;
