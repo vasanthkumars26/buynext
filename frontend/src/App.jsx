@@ -7,7 +7,7 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import Home from './components/Home'
 import Navbar from './common/Navbar'
-import About from './components/Blogs'
+import About from './admin/AdminBlogs'
 import CartPage from './components/CartPage'
 import { CartProvider } from './context/Cartcon'
 import OrdersPage from './components/OrdersPage'
@@ -15,15 +15,19 @@ import OrderSuccess from './components/OrderSuccess'
 import SearchPage from './components/SearchPage'
 import Footer from './common/Footer'
 import Wishlist from './components/Wishlist'
-import Blogs from './components/Blogs'
+import Blogs from './admin/AdminBlogs'
 import CheckoutPage from './components/CheckoutPage'
 import Apptheme from './common/Apptheme'
+import ProductDetails from './components/Productdetails'
+import AdminDashboard from './admin/AdminDashboard'
+import AdminProducts from './admin/AdminProducts'
+import AdminBlogs from './admin/AdminBlogs'
 
 
 function App() {
 
   return (
-  <Apptheme>  <div>
+  <Apptheme>  <div className=''>
       <CartProvider>
       <HashRouter>
             <Navbar/>
@@ -39,6 +43,11 @@ function App() {
              <Route path="/ordersuccess" element={<OrderSuccess />} />
              <Route path="/search" element={<SearchPage />} />
              <Route path="/checkout" element={<CheckoutPage/>} />
+             <Route path="/product/:id" element={<ProductDetails/>} />
+             <Route path="/admin" element={<AdminDashboard/>} />
+             <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/blogs" element={<AdminBlogs />} />
+
           </Routes>
           <Footer/>
       </HashRouter>

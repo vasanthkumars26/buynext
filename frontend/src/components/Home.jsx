@@ -4,6 +4,7 @@ import { FaClock, FaMoneyBillWave, FaRocket } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Belhome from "./Belhome";
 import AppTheme, { GlassCard, CTAButton, AccentText } from "../common/Apptheme";
+import NewArrivals from "../common/NewArrivals";
 
 
 const Home = () => {
@@ -77,7 +78,7 @@ const Home = () => {
 
   return (
     
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="w-full  mx-auto ">
       {/* hero area */}
       <div className="relative mt-[40%] md:mt-[10%]">
         <img
@@ -104,7 +105,7 @@ const Home = () => {
           </h1>
 
           <div className="flex flex-row sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6 justify-end">
-            <button className="px-3 py-2 rounded-xl text-sm sm:text-base font-semibold bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 shadow hover:-translate-y-0.5 transition-transform">
+            <button className="px-3 py-2 rounded-xl text-sm sm:text-base font-semibold bg-black text-gray-300 shadow hover:-translate-y-0.5 transition-transform">
               {desc[current].btn1}
             </button>
             <button className="px-3 py-2 rounded-xl text-sm sm:text-base font-semibold bg-white/8 text-white/95 border border-white/12 shadow hover:-translate-y-0.5 transition-transform">
@@ -136,7 +137,7 @@ const Home = () => {
           <button
             key={idx}
             aria-label={`go to slide ${idx + 1}`}
-            className={`w-3 h-3 rounded-full transition-colors focus:outline-none ${idx === current ? "bg-cyan-300" : "bg-white/30"}`}
+            className={`w-3 h-3 rounded-full transition-colors focus:outline-none ${idx === current ? "bg-red-700" : "bg-white/30"}`}
             onClick={() => setCurrent(idx)}
           />
         ))}
@@ -170,15 +171,15 @@ const Home = () => {
         shadow-sm
       "
     >
-      <div className="text-3xl sm:text-4xl lg:text-5xl text-cyan-300">
+      <div className="text-3xl  text-red-700">
         {item.icon}
       </div>
 
       <div>
-        <h2 className="text-base sm:text-lg md:text-xl font-bold text-white/95">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-300">
           {item.heading}
         </h2>
-        <p className="text-xs sm:text-sm md:text-base text-white/80">
+        <p className="text-xs sm:text-sm md:text-base text-gray-300">
           {item.subhead}
         </p>
       </div>
@@ -191,7 +192,7 @@ const Home = () => {
       <div className="mt-8">
         <Belhome />
       </div>
-
+          <div><NewArrivals limit={6} /></div>
       {/* Small inline glass styles for immediate consistency */}
       <style>{`
         .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(6px); }

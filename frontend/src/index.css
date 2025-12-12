@@ -1,6 +1,12 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  body {
+    @apply font-poppins
+}
+}
 
 /* prevent horizontal scroll globally */
 html, body, #root {
@@ -22,3 +28,6 @@ img, .card img, .product-card img {
   box-sizing: border-box;
 }
     
+
+
+

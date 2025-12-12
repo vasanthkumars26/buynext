@@ -45,7 +45,7 @@ const float = {
 
 export default function AppTheme({ children }) {
   return (
-    <div className="app-theme-wrapper min-h-screen font-sans text-gray-100 antialiased bg-[#071A52]">
+    <div className="app-theme-wrapper min-h-screen font-poppins text-gray-100 antialiased bg-[#0f0f0f]">
     
       {/* Top-level container with subtle grain */}
       <div className="min-h-screen p-6 md:p-10 lg:p-14">

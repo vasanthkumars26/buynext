@@ -27,7 +27,7 @@ const CartPage = () => {
     <div className="max-w-5xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] lg:mt-[10%] px-4">
       <h1 className="text-3xl font-extrabold mb-6 text-white">Your Cart</h1>
 
-      <div className="space-y-6">
+      <div className="space-y-6 text-start">
         {cart.map((item) => (
           <div
             key={item._id}
@@ -41,7 +41,7 @@ const CartPage = () => {
               />
               <div className="flex-1">
                 <h2 className="font-semibold text-white/95">{item.desc}</h2>
-                <p className="text-cyan-300 font-bold mt-1">${item.price}</p>
+                <p className="text-red-700 font-bold mt-1">${item.price}</p>
               </div>
             </div>
 
@@ -84,14 +84,14 @@ const CartPage = () => {
       <div className="mt-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
         <div className="text-left">
           <h2 className="text-xl font-bold text-white">Total:</h2>
-          <div className="text-2xl font-extrabold text-cyan-300"> ${totalPrice.toFixed(2)}</div>
+          <div className="text-2xl font-extrabold text-red-700"> ${totalPrice.toFixed(2)}</div>
         </div>
 
         <div className="flex gap-3 items-center">
           {/* Keep placeorder/setCart usage unchanged — visual-only button */}
           <button
             onClick={handlecheckout}
-            className="px-6 py-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 font-semibold shadow-lg hover:scale-105 transition-transform"
+            className="px-6 py-2 rounded-2xl bg-gray-300 text-gray-900 font-semibold shadow-lg hover:scale-105 transition-transform"
           >
             Proceed to Checkout
           </button>

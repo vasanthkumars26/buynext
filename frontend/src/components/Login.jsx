@@ -49,10 +49,10 @@ const Login = () => {
    
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
         <GlassCard className="max-w-md w-full">
-          <form onSubmit={handlelogin} className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold">
-              Hey <AccentText>{name || "there"}</AccentText>!{" "}
-              <span className="text-white/80">You can login here👇🏼</span>
+          <form onSubmit={handlelogin} className="space-y-6 text-gray-300">
+            <h2 className="text-2xl md:text-3xl font-semibold">
+              Hey <>{name || "there"}</>!{" "}
+              <span className="text-gray-300">You can login here👇🏼</span>
             </h2>
 
             <div>
@@ -99,8 +99,8 @@ const Login = () => {
 
             {err && <p className="text-red-400 mt-1 animate-pulse">{err}</p>}
 
-            <div className="flex items-center justify-between gap-4">
-              <CTAButton type="submit">Login</CTAButton>
+            <div className="flex items-center justify-center ">
+              <button className="bg-red-700 text-sm mb-3 w-36 text-gray-300 px-3 py-1 rounded-full" type="submit">Login</button>
 
             </div>
               <Link
@@ -108,7 +108,7 @@ const Login = () => {
                 className="text-sm text-white/80 hover:text-white  ml-auto"
               >
                 Don't have an account?{" "}
-                <span className="text-cyan-300 underline font-semibold">Register here!</span>
+                <span className="text-red-600 underline font-semibold">Register here!</span>
               </Link>
           </form>
         </GlassCard>

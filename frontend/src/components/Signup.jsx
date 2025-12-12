@@ -49,9 +49,9 @@ const Signup = () => {
     
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
         <GlassCard className="max-w-md w-full">
-          <form onSubmit={handleuser} className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold">
-              <AccentText>SignUp</AccentText>
+          <form onSubmit={handleuser} className="space-y-6 text-gray-300">
+            <h2 className="text-2xl md:text-3xl font-semibold">
+            SignUp
             </h2>
 
             <div>
@@ -104,13 +104,13 @@ const Signup = () => {
 
             {err && <p className="text-red-400 mt-1 animate-pulse">{err}</p>}
 
-            <div className="flex items-center gap-4">
-              <CTAButton type="submit">Signup</CTAButton>
+            <div className="flex items-center justify-center gap-4">
+              <button className="w-36 bg-red-700 text-sm text-gray-300 px-3 py-1 rounded-full" type="submit">Signup</button>
             </div>
 
             <p className="text-sm text-white/80">
               Already account exists?
-              <Link to="/" className="text-cyan-300 underline ml-2">
+              <Link to="/" className="font-semibold text-red-600 underline ml-2">
                 Login here!
               </Link>
             </p>

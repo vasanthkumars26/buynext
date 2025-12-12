@@ -10,6 +10,7 @@ import {
   FaHeart,
   FaBars,
   FaTimes,
+  FaSearch,
 } from "react-icons/fa";
 import { useCart } from "../context/Cartcon";
 import Wishlist from "../components/Wishlist";
@@ -65,7 +66,7 @@ const Navbar = () => {
     <div>
       {/* banner — alignment & behavior preserved, visual restyle only */}
       {banner && (
-        <div className="fixed top-0 left-0 z-50 w-full flex justify-center bg-white/6 text-sm text-white/90 py-2 glass">
+        <div className="fixed top-0 left-0 z-50 w-full flex justify-center bg-black text-sm text-white/90 py-2">
           <p className="px-2">FREE SHIPPING for orders over $49 - Get some inspirational shirts for your loved one today!</p>
           <button onClick={() => setBanner(false)} className="hover:cursor-pointer px-3">
             X
@@ -78,7 +79,7 @@ const Navbar = () => {
           - left-0 & w-full so the bar is flush with viewport */
       }
       <div
-        className={`fixed ${banner ? "top-10" : "top-0"} left-0 z-40 w-full flex items-center justify-between md:justify-around glass border-b border-white/10 shadow-lg px-4 py-3`}
+        className={`fixed ${banner ? "top-10" : "top-0"} left-0 z-40 w-full flex items-center justify-between md:justify-around bg-black border-b border-white/10 shadow-lg px-4 py-3`}
       >
         {/* menu toggle (mobile) */}
        {/* Logo + Menu + Mobile Search */}
@@ -94,9 +95,9 @@ const Navbar = () => {
 
     {/* logo */}
     <div>
-      <Link to="/home" className="mr-2 text-2xl font-bold inline-flex items-center gap-2">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-400">
-          BuyNext
+      <Link to="/home" className="mr-2 text-3xl font-bold inline-flex items-center gap-2">
+        <span className=" text-red-600">
+          BUYNEXT
         </span>
       </Link>
     </div>
@@ -111,18 +112,18 @@ const Navbar = () => {
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Search products..."
-        className="w-full rounded-2xl p-3 text-black outline-none bg-white/6 placeholder-white/60 border border-white/8 text-sm"
+        className="w-full rounded-full p-2 m-2 text-black outline-none bg-white/6 placeholder-white/60 border border-white/8 text-sm"
       />
       <button
         onClick={handlesearchbtn}
         disabled={!search.trim()}
-        className={`px-3 py-2 rounded-2xl text-sm font-semibold ${
+        className={`px-3 py-2  rounded-full text-sm font-semibold ${
           !search.trim()
             ? "opacity-40 cursor-not-allowed"
-            : "bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900 hover:scale-105"
+            : "bg-red-700 text-gray-900 hover:scale-105"
         }`}
       >
-        Search
+        <FaSearch className="text-gray-300 ml-0 m-2"/>
       </button>
     </div>
   </div>
@@ -139,14 +140,14 @@ const Navbar = () => {
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search products..."
-              className="w-full sm:flex-1 rounded-2xl p-3 outline-none bg-transparent placeholder-white/60 border border-white/8"
+              className="w-full sm:flex-1 rounded-full p-2 m-2 outline-none bg-transparent  placeholder-white/60 border-2"
             />
             <button
               onClick={handlesearchbtn}
               disabled={!search.trim()}
-              className={`px-4 py-2 rounded-2xl text-sm sm:text-base font-semibold transition-transform transform ${!search.trim() ? "opacity-40 cursor-not-allowed" : "hover:scale-105"} bg-gradient-to-r from-cyan-400 to-indigo-500 text-gray-900`}
+              className={`px-4 py-2 rounded-full ml-0 m-2 text-sm sm:text-base font-semibold transition-transform transform ${!search.trim() ? "opacity-40 cursor-not-allowed" : "hover:scale-105"} bg-red-700 text-white`}
             >
-              Search
+              <FaSearch className="text-gray-300"/>
             </button>
           </div>
         )}
@@ -157,7 +158,7 @@ const Navbar = () => {
           {log && (
             <div className="relative group">
               <Link to="/">
-                <FaHome className="text-2xl" />
+                <FaHome className="text-2xl text-red-600" />
               </Link>
               <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Home
@@ -168,8 +169,8 @@ const Navbar = () => {
           {log && (
             <div className="relative group">
               <Link to="/wishlist" className="flex">
-                <FaHeart className="text-2xl relative z-10" />
-                <span className="absolute -top-2 -right-4 bg-white/6 rounded-full text-red-500 font-bold px-2 z-20">{wishlist.length}</span>
+                <FaHeart className="text-2xl relative z-10 text-red-600" />
+                <span className="absolute -top-2 -right-4 bg-white/6 rounded-full text-gray-300 font-bold px-2 z-20">{wishlist.length}</span>
               </Link>
               <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Wishlist
@@ -180,8 +181,8 @@ const Navbar = () => {
           {log && (
             <div className="relative group">
               <Link to="/cart" className="flex">
-                <FaShoppingCart className="text-2xl font-normal relative z-10" />
-                <span className="absolute -top-2 -right-4 bg-white/6 rounded-full text-red-600 font-bold px-2 z-20">{cart.length}</span>
+                <FaShoppingCart className="text-2xl font-normal relative z-10 text-red-600" />
+                <span className="absolute -top-2 -right-3 bg-white/6 rounded-full text-gray-300 font-bold px-2 z-20">{cart.length}</span>
               </Link>
               <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 Cart
@@ -191,20 +192,20 @@ const Navbar = () => {
 
           {log && (
             <div className="relative group">
-              <Link to="/blogs">
-                <FaAddressCard className="text-2xl" />
+              <Link to="/admin">
+                <FaAddressCard className="text-2xl text-red-600" />
               </Link>
               <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Blogs
+                Admin
               </span>
             </div>
           )}
 
           {log && (
             <div className="bg-white/6 p-2 rounded-xl">
-              <Link to="/orders" className="flex items-center">
+              <Link to="/orders" className="flex items-center text-red-600">
                 Your Orders!
-                <span className="flex items-center text-red-600 font-extrabold rounded-full ml-2">({orders.length})</span>
+                <span className="flex items-center text-gray-300 font-extrabold rounded-full ">({orders.length})</span>
               </Link>
             </div>
           )}
@@ -215,14 +216,14 @@ const Navbar = () => {
           {log ? (
             <button
               onClick={logout}
-              className="hidden md:block ml-6 bg-gradient-to-r from-cyan-400 to-indigo-500 px-4 py-2 rounded-2xl text-gray-900 hover:scale-105 transition-transform shadow"
+              className="hidden md:block ml-6 bg-red-700 px-4 py-2 rounded-full text-gray-300 hover:scale-105 transition-transform shadow"
             >
               Logout
             </button>
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="ml-2 bg-gradient-to-r from-cyan-400 to-indigo-500 px-4 py-2 rounded-2xl text-gray-900 hover:scale-105 transition-transform shadow"
+              className="ml-2 bg-red-700 text-gray-300 px-4 py-1 rounded-full hover:scale-105 transition-transform shadow"
             >
               Login
             </button>
@@ -253,11 +254,11 @@ const Navbar = () => {
             <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
             {log && <li><Link to="/wishlist" onClick={() => setMenuOpen(false)}>Wishlist ({wishlist.length})</Link></li>}
             {log && <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Cart ({cart.length})</Link></li>}
-            <li><Link to="/blogs" onClick={() => setMenuOpen(false)}>Blogs</Link></li>
+            <li><Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link></li>
             {log && <li><Link to="/orders" onClick={() => setMenuOpen(false)}>Orders ({orders.length})</Link></li>}
             <li>
               {log ? (
-                <button onClick={logout} className="text-red-500">Logout</button>
+                <button onClick={logout} className="text-white">Logout</button>
               ) : (
                 <button onClick={() => { navigate("/login"); setMenuOpen(false); }}>Login</button>
               )}
