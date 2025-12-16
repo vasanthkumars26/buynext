@@ -4,8 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import auth from "../../config/firebase";
 
-// IMPORTANT: adjust path if your theme file name differs (Apptheme vs AppTheme)
-import AppTheme, { GlassCard, CTAButton, AccentText } from "../common/Apptheme";
+import { GlassCard } from "../common/Apptheme";
 
 const Login = () => {
   const location = useLocation();
@@ -21,7 +20,6 @@ const Login = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // keep exactly the same auth logic you had
     auth.onAuthStateChanged((user) => {
       if (user) {
         navigate("/home");
@@ -34,7 +32,7 @@ const Login = () => {
     e.preventDefault();
 
     signInWithEmailAndPassword(auth, email, pass)
-      .then((res) => {
+      .then(() => {
         navigate("/home");
         console.log("User Logged in!");
       })
@@ -45,75 +43,87 @@ const Login = () => {
   };
 
   return (
-    // If you already wrap your app with <AppTheme> globally, you can remove the outer AppTheme wrapper
-   
-      <div className="min-h-[80vh] flex items-center justify-center px-4 py-10">
-        <GlassCard className="max-w-md w-full">
-          <form onSubmit={handlelogin} className="space-y-6 text-gray-300">
-            <h2 className="text-2xl md:text-3xl font-semibold">
-              Hey <>{name || "there"}</>!{" "}
-              <span className="text-gray-300">You can login here👇🏼</span>
-            </h2>
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 mt-[2%]">
+      <GlassCard className="max-w-md w-full bg-white shadow-xl rounded-2xl border border-gray-200">
+        <form onSubmit={handlelogin} className="space-y-6 text-gray-700">
+          <h2 className="text-2xl font-semibold text-[#2874F0]">
+            Hey {name || "there"} 👋
+          </h2>
+          <p className="text-sm text-gray-500">
+            Login to your account
+          </p>
 
-            <div>
-              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
-                Name
-              </label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                placeholder="Name.."
-                required
-                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
-              />
-            </div>
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Name
+            </label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+              placeholder="Enter your name"
+              required
+              className="w-full rounded-lg p-3 border border-gray-300 outline-none focus:ring-2 focus:ring-[#2874F0]"
+            />
+          </div>
 
-            <div>
-              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
-                Email
-              </label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="Email.."
-                required
-                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
-              />
-            </div>
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Email
+            </label>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="Enter your email"
+              required
+              className="w-full rounded-lg p-3 border border-gray-300 outline-none focus:ring-2 focus:ring-[#2874F0]"
+            />
+          </div>
 
-            <div>
-              <label className="text-start ml-2 block text-sm font-medium text-white/80 mb-2">
-                Password
-              </label>
-              <input
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                type="password"
-                placeholder="Password.."
-                required
-                className="w-full rounded-2xl p-3 outline-none glass border border-white/8 placeholder-white/60 text-white bg-transparent"
-              />
-            </div>
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <input
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              type="password"
+              placeholder="Enter your password"
+              required
+              className="w-full rounded-lg p-3 border border-gray-300 outline-none focus:ring-2 focus:ring-[#2874F0]"
+            />
+          </div>
 
-            {err && <p className="text-red-400 mt-1 animate-pulse">{err}</p>}
+          {err && (
+            <p className="text-red-500 text-sm font-medium">
+              {err}
+            </p>
+          )}
 
-            <div className="flex items-center justify-center ">
-              <button className="bg-red-700 text-sm mb-3 w-36 text-gray-300 px-3 py-1 rounded-full" type="submit">Login</button>
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="w-full bg-[#2874F0] hover:bg-[#1f5fd6] text-white py-3 rounded-lg font-semibold transition"
+          >
+            Login
+          </button>
 
-            </div>
-              <Link
-                to="/signup"
-                className="text-sm text-white/80 hover:text-white  ml-auto"
-              >
-                Don't have an account?{" "}
-                <span className="text-red-600 underline font-semibold">Register here!</span>
-              </Link>
-          </form>
-        </GlassCard>
-      </div>
-    
+          <p className="text-sm text-center text-gray-600">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-[#2874F0] font-semibold hover:underline"
+            >
+              Register here
+            </Link>
+          </p>
+        </form>
+      </GlassCard>
+    </div>
   );
 };
 

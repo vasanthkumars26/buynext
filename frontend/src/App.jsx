@@ -27,7 +27,7 @@ import AdminBlogs from "./admin/AdminBlogs";
 
 function App() {
   return (
-    <Apptheme>
+    
       <div className="">
         <CartProvider>
           <HashRouter>
@@ -55,7 +55,7 @@ function App() {
           </HashRouter>
         </CartProvider>
       </div>
-    </Apptheme>
+    
   );
 }
 

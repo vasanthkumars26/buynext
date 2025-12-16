@@ -288,6 +288,7 @@ import {
   FaWater,
   FaShoppingBag,
   FaHeart,
+  FaRegHeart,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -353,7 +354,7 @@ const Belhome = () => {
         onClick={() => (isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product))}
         className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-gray-100 text-black  shadow-md"}`}
       >
-        <FaHeart />
+        <FaRegHeart />
       </motion.button>
     );
   };
@@ -363,8 +364,8 @@ const Belhome = () => {
     <div className="overflow-x-hidden">
       <div className="mt-6   mx-auto w-full text-white box-border">
         <header className="text-center mb-4">
-          <h1 className="text-2xl sm:text-3xl text-gray-300 md:text-4xl font-bold">Summer Collection</h1>
-          <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-300 mt-2 text-white/95">Clothes & Accessories</p>
+          <h1 className="text-2xl sm:text-3xl text-black md:text-4xl font-bold">Summer Collection</h1>
+          <p className="text-base sm:text-lg md:text-xl font-semibold text-black mt-2">Clothes & Accessories</p>
         </header>
 
         <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 text-gray-300">
@@ -372,7 +373,7 @@ const Belhome = () => {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium transition-all ${filter === cat ? "bg-gray-300 text-black shadow-lg" : "bg-white/6 text-white/90 hover:bg-white/10"}`}
+              className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium transition-all ${filter === cat ? "bg-gray-300 text-blue-900 shadow-lg" : "bg-white/6 text-blue-700 hover:bg-white/10"}`}
             >
               {cat}
             </button>
@@ -388,7 +389,7 @@ const Belhome = () => {
                 key={costume._id}
                 whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
                 transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="bg-transparent glass-dark rounded-2xl p-3 w-full"
+                className="bg-transparent glass-dark rounded-2xl p-3 w-full bg-slate-100 shadow-md"
               >
                 {/* CLICKABLE: image + title open product details route (passes product in state). This does NOT change add-to-cart/wishlist behaviour */}
                 <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
@@ -400,10 +401,10 @@ const Belhome = () => {
                     />
                   </div>
 
-                  <h2 className="mt-3 font-semibold text-white/100 text-sm sm:text-base text-start">{costume.desc}</h2>
+                  <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
                 </Link>
 
-                <p className="text-gray-300 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
+                <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
 
                 <div className="flex gap-2 sm:gap-3 mt-3">
                   <WishlistButton product={costume} />
@@ -411,7 +412,7 @@ const Belhome = () => {
                     whileHover={{ scale: isInCart ? 1 : 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => { if (!isInCart) addtoCart(costume); }}
-                    className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-white/90 border border-white/8 hover:shadow-md"}`}
+                    className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
                     aria-pressed={!!isInCart}
                   >
                     {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
@@ -427,7 +428,7 @@ const Belhome = () => {
           <div key={index} className="relative mt-10 rounded-2xl overflow-hidden w-full">
             <img src={img.img} alt="fimage" className="w-full h-40 sm:h-48 md:h-64 object-cover block max-w-full" />
             <div className="absolute inset-0 flex flex-col justify-center items-start p-4 sm:p-6 md:p-12 bg-gradient-to-r from-black/35 to-black/10">
-              <p className="text-sm md:text-lg font-semibold text-gray-300">{img.desc}</p>
+              <p className="text-sm md:text-lg font-semibold text-blue-300">{img.desc}</p>
               <p className="text-base sm:text-lg md:text-2xl font-bold text-white mt-2">{img.titl}</p>
               <Link to="/" className="mt-4 inline-block px-3 py-2 rounded-2xl bg-gray-300 text-gray-900 font-semibold text-xs sm:text-sm">
                 {img.btna}
@@ -439,19 +440,19 @@ const Belhome = () => {
         {/* Image footer (three promotions) */} 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {imagefooter.map((item, index) => (
-            <div key={index} className="glass-dark rounded-xl p-4 flex flex-col items-start">
+            <div key={index} className="glass-dark bg-blue-700 rounded-xl p-4 flex flex-col items-start">
               <h3 className="text-gray-300 font-semibold text-base sm:text-lg md:text-xl">{item.heading}</h3>
-              <button className="mt-2 text-red-600 text-sm sm:text-base">{item.btn}</button>
+              <button className="mt-2 text-black text-sm sm:text-base">{item.btn}</button>
             </div>
           ))}
         </div>
 
         {/* Top View in This Week */} 
         <section className="mt-10">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold">Top View in This Week</h2>
-          <p className="text-base sm:text-lg md:text-xl font-bold mt-2">Product of the Week</p>
+          <h2 className="text-lg sm:text-xl md:text-2xl text-black font-semibold">Top view in this week</h2>
+          <p className="text-base sm:text-lg md:text-xl font-bold text-black mt-2">Product of the week</p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4 ">
             {costumes.map((costume) => {
               const isInCart = Array.isArray(cart) && cart.find((c) => c._id === costume._id);
               return (
@@ -459,24 +460,24 @@ const Belhome = () => {
                   key={costume._id}
                   whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className="bg-transparent glass-dark rounded-2xl p-3 w-full"
+                  className="bg-transparent glass-dark rounded-2xl p-3 w-full bg-slate-100 shadow-md"
                 >
                   {/* CLICKABLE: image + title open product details route */} 
                   <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
                     <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
                       <img src={costume.img} alt={costume.desc} className="w-full h-full object-cover block max-w-full" />
                     </div>
-                    <h2 className="mt-3 font-semibold text-white/100 text-sm sm:text-base text-start">{costume.desc}</h2>
+                    <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
                   </Link>
 
-                  <p className="text-gray-300 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
+                  <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
                   <div className="flex gap-2 sm:gap-3 mt-3">
                     <WishlistButton product={costume} />
                     <motion.button
                       whileHover={{ scale: isInCart ? 1 : 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => { if (!isInCart) addtoCart(costume); }}
-                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-white/90 border border-white/8 hover:shadow-md"}`}
+                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
                       aria-pressed={!!isInCart}
                     >
                       {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
@@ -488,7 +489,7 @@ const Belhome = () => {
           </div>
 
           {/* More products (pow) */} 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4 ">
             {pow.map((costume) => {
               const isInCart = Array.isArray(cart) && cart.find((c) => c._id === costume._id);
               return (
@@ -496,24 +497,24 @@ const Belhome = () => {
                   key={costume._id}
                   whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className="bg-transparent glass-dark rounded-2xl p-3 w-full"
+                  className=" rounded-2xl p-3 w-full bg-slate-100 shadow-md"
                 >
                   {/* CLICKABLE: image + title open product details route */} 
                   <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
                     <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
                       <img src={costume.img} alt={costume.desc} className="w-full h-full object-cover block max-w-full" />
                     </div>
-                    <h2 className="mt-3 font-semibold text-white/100 text-sm sm:text-base text-start">{costume.desc}</h2>
+                    <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
                   </Link>
 
-                  <p className="text-gray-300 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
+                  <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
                   <div className="flex gap-2 sm:gap-3 mt-3">
                     <WishlistButton product={costume} />
                     <motion.button
                       whileHover={{ scale: isInCart ? 1 : 1.03 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => { if (!isInCart) addtoCart(costume); }}
-                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-white/90 border border-white/8 hover:shadow-md"}`}
+                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
                       aria-pressed={!!isInCart}
                     >
                       {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
@@ -543,8 +544,8 @@ const Belhome = () => {
           {/* bottom icons/footer info */} 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 text-start">
             {imagefooter2.map((item, index) => (
-              <div key={index} className="glass-dark rounded-xl p-4 flex gap-4 items-center">
-                <p className="text-red-600 text-2xl">{item.icon}</p>
+              <div key={index} className="glass-dark bg-blue-700 rounded-xl p-4 flex gap-4 items-center m-4">
+                <p className="text-white text-2xl">{item.icon}</p>
                 <div>
                   <h1 className="text-white/95 font-semibold md:text-lg">{item.heading}</h1>
                   <p className="text-white/80 text-sm md:text-base">{item.subhead}</p>
@@ -556,12 +557,11 @@ const Belhome = () => {
 
         {/* inline styles for glass effect (keeps consistent with AppTheme) */} 
         <style>{`
-          /* darker glass for contrast, prevents the blue background from making text hard to read */
-          .glass-dark { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(6px); }
-          .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(6px); }
-          /* ensure no elements can cause horizontal scroll */
-          :root, body, #root { overflow-x: hidden; }
-        `}</style>
+  :root, body, #root {
+    overflow-x: hidden;
+    background: white;
+  }
+`}</style>
       </div>
     </div>
   );

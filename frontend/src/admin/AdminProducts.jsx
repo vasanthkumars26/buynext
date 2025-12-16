@@ -266,26 +266,26 @@ export default function AdminProducts({ onProductsChange } = {}) {
 
   // admin UI (form + list)
   return (
-    <div className="p-6 text-gray-300">
-      <h2 className="text-2xl text-gray-300 font-semibold mb-4">Admin — Products</h2>
+    <div className="p-6 ">
+      <h2 className="text-2xl text-black font-semibold mb-4">Admin — Products</h2>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/5 p-4 rounded mb-6">
         <div className="md:col-span-1">
-          <label className="block text-sm font-medium mb-2">Main Image</label>
+          <label className="block text-sm font-medium mb-2 text-black">Main Image</label>
           <div className="w-full h-48 bg-white/6 rounded overflow-hidden flex items-center justify-center border">
             {titleImagePreview ? (
               <img src={titleImagePreview} alt="preview" className="w-full h-full object-cover" />
             ) : form.img ? (
               <img src={form.img} alt="preview" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-white/70 px-3">No image selected</span>
+              <span className="text-gray-400   px-3">No image selected</span>
             )}
           </div>
-          <input type="file" accept="image/*" onChange={onTitleFileChange} className="mt-3 rounded-full =" />
+          <input type="file" accept="image/*" onChange={onTitleFileChange} className="mt-3 text-sm" />
         </div>
 
         <div className="md:col-span-2 flex flex-col gap-3">
-          <label className="text-sm font-medium">Product Details</label>
+          <label className="text-sm font-medium text-black">Product Details</label>
 
           <input
             placeholder="Short desc (shown on cards)"
@@ -322,12 +322,12 @@ export default function AdminProducts({ onProductsChange } = {}) {
             placeholder="Long description (product details page)"
             value={form.longDesc}
             onChange={(e) => setForm((s) => ({ ...s, longDesc: e.target.value }))}
-            className="w-full min-h-[120px] p-3 rounded border bg-gray-200 text-black"
+            className="w-full min-h-[120px] p-3 rounded border bg-gray-200 text-black outline-none"
           />
 
           <div>
-            <label className="block text-sm font-medium mb-2 ">Gallery images (optional)</label>
-            <input type="file" accept="image/*" multiple onChange={onGalleryChange} className="rounded-full" />
+            <label className="block text-sm font-medium mb-2 text-black ">Gallery images (optional)</label>
+            <input type="file" accept="image/*" multiple onChange={onGalleryChange} className="text-sm" />
             <div className="mt-3 flex gap-2 overflow-auto">
               {(galleryPreviews.length ? galleryPreviews : form.images || []).map((g, idx) => (
                 <div key={idx} className="w-20 h-20 rounded overflow-hidden">
@@ -341,10 +341,10 @@ export default function AdminProducts({ onProductsChange } = {}) {
             <button type="submit" className="px-4 py-2 rounded-full bg-gray-300 text-black font-semibold">
               {editingId ? "Update Product" : "Add Product"}
             </button>
-            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-full border">
+            <button type="button" onClick={resetForm} className="px-4 py-2 text-blue-700 rounded-full border border-gray-300">
               Reset
             </button>
-            <button type="button" onClick={handleResetProducts} className="px-4 py-2 rounded-full border text-red-500">
+            <button type="button" onClick={handleResetProducts} className="px-4 py-2 rounded-full border border-gray-300 text-red-500">
               Reset All
             </button>
           </div>
@@ -352,10 +352,10 @@ export default function AdminProducts({ onProductsChange } = {}) {
       </form>
 
       {/* list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start">
-        {products.length === 0 && <div className="p-4 bg-white/6 rounded">No products yet.</div>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start  ">
+        {products.length === 0 && <div className="p-4 bg-white/6 text-black rounded">No products yet.</div>}
         {products.map((p) => (
-          <div key={p._id} className="p-4 bg-white/5 rounded flex gap-4 items-start">
+          <div key={p._id} className="p-4 bg-blue-700 rounded flex gap-4 items-start">
             <div className="w-28 h-20 rounded overflow-hidden bg-white/6">
               {p.img ? <img src={p.img} alt={p.desc} className="w-full h-full object-cover" /> : null}
             </div>

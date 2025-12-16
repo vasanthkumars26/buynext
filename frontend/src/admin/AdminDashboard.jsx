@@ -100,16 +100,16 @@ export default function AdminDashboard() {
         {/* Right column: quick controls + preview selector */}
         <aside className="lg:col-span-1 space-y-4">
           <div className="p-4 bg-white/5 rounded-2xl glass border border-white/6">
-            <h3 className="font-semibold mb-2 text-gray-300">Preview selector</h3>
+            <h3 className="font-semibold mb-2 text-black">Preview selector</h3>
             {productsPreview.length === 0 ? (
-              <div className="text-sm text-gray-300">No products available to preview.</div>
+              <div className="text-sm text-black">No products available to preview.</div>
             ) : (
               <div className="space-y-2 max-h-64 overflow-auto">
                 {productsPreview.map((p) => (
                   <button
                     key={p._id}
                     onClick={() => setSelectedProductId(p._id)}
-                    className={`w-full text-left p-2 rounded ${String(p._id) === String(selectedProductId) ? "bg-white/8" : "hover:bg-white/4"}`}
+                    className={`w-full text-left p-2 rounded ${String(p._id) === String(selectedProductId) ? "bg-blue-700" : "hover:bg-black/4"}`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded overflow-hidden bg-white/6">
@@ -128,10 +128,10 @@ export default function AdminDashboard() {
 
           {/* Details / preview area (under the add pictures & details section per your request) */}
           <div className="p-4 bg-white/5 rounded-2xl glass border border-white/6 text-start">
-            <h3 className="font-semibold mb-3 text-gray-300">Product details preview</h3>
+            <h3 className="font-semibold mb-3 text-black">Product details preview</h3>
 
             {!selectedProduct ? (
-              <div className="text-sm text-gray-300">Select a product to preview its details here.</div>
+              <div className="text-sm text-black">Select a product to preview its details here.</div>
             ) : (
               <div className="space-y-3">
                 <div className="w-full h-48 rounded overflow-hidden bg-white/6">
@@ -145,12 +145,12 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <div className="text-lg font-semibold text-white/95">{selectedProduct.desc}</div>
-                  <div className="text-sm text-white/70 mt-1">{selectedProduct.category}</div>
-                  <div className="text-xl font-bold text-red-600 mt-2">${selectedProduct.price}</div>
+                  <div className="text-lg font-semibold text-black">{selectedProduct.desc}</div>
+                  <div className="text-sm text-black   mt-1">{selectedProduct.category}</div>
+                  <div className="text-xl font-bold text-blue-900 mt-2">${selectedProduct.price}</div>
                 </div>
 
-                <div className="text-sm text-white/70">
+                <div className="text-sm text-black">
                   {selectedProduct.longDesc || selectedProduct.desc}
                 </div>
 
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                       setProductsPreview(next);
                       setSelectedProductId(next.length ? next[0]._id : null);
                     }}
-                    className="px-2 py-1 rounded-full border text-red-500"
+                    className="px-2 py-1 rounded-full border text-red-600"
                   >
                     Delete
                   </button>

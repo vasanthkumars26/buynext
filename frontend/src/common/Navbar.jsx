@@ -13,29 +13,24 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useCart } from "../context/Cartcon";
-import Wishlist from "../components/Wishlist";
-
-// Theme components — same import path you had
-import { GlassCard, CTAButton, AccentText } from "./Apptheme";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  // handlesearchbtn — logic unchanged
+  const navigate = useNavigate();
+
   const handlesearchbtn = () => {
-    if (search.trim !== "") {
+    if (search.trim() !== "") {
       navigate(`/search?query=${encodeURIComponent(search)}`);
+      setSearch("")
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handlesearchbtn();
-    }
+    if (e.key === "Enter") handlesearchbtn();
   };
 
   const { wishlist, cart, orders } = useCart();
 
-  const navigate = useNavigate();
   const [log, setLog] = useState(false);
   const [banner, setBanner] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,231 +43,211 @@ const Navbar = () => {
         setLog(true);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   const logout = () => {
     signOut(auth)
-      .then((res) => {
+      .then(() => {
         setLog(false);
         navigate("/");
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.log);
   };
 
   return (
     <div>
-      {/* banner — alignment & behavior preserved, visual restyle only */}
+      {/* Top Banner */}
       {banner && (
-        <div className="fixed top-0 left-0 z-50 w-full flex justify-center bg-black text-sm text-white/90 py-2">
-          <p className="px-2">FREE SHIPPING for orders over $49 - Get some inspirational shirts for your loved one today!</p>
-          <button onClick={() => setBanner(false)} className="hover:cursor-pointer px-3">
-            X
+        <div className="fixed top-0 left-0 z-50 w-full bg-[#0053E2] text-white text-sm flex justify-between items-center px-4 py-2">
+          <p>FREE SHIPPING on orders above ₹499 🎉</p>
+          <button onClick={() => setBanner(false)} className="font-bold">
+            ✕
           </button>
         </div>
       )}
 
-      {/* main nav container
-          - when banner is visible push navbar down using top-10 (same height as banner)
-          - left-0 & w-full so the bar is flush with viewport */
-      }
+      {/* Navbar */}
       <div
-        className={`fixed ${banner ? "top-10" : "top-0"} left-0 z-40 w-full flex items-center justify-between md:justify-around bg-black border-b border-white/10 shadow-lg px-4 py-3`}
+        className={`fixed ${banner ? "top-9" : "top-0"
+          } left-0 z-40 w-full bg-[#0053E2] shadow-md`}
       >
-        {/* menu toggle (mobile) */}
-       {/* Logo + Menu + Mobile Search */}
-<div className="flex flex-col md:flex-row items-start md:items-center w-full md:w-auto">
+        <div className="flex items-center justify-between px-4 py-3">
 
-  {/* top row: menu + logo */}
-  <div className="flex items-center w-full md:w-auto mb-2 md:mb-0">
-    <div className="mr-2 lg:hidden md:block">
-      <button aria-label="Open menu" onClick={() => setMenuOpen(true)} className="text-white">
-        <FaBars className="cursor-pointer text-xl" />
-      </button>
-    </div>
-
-    {/* logo */}
-    <div>
-      <Link to="/home" className="mr-2 text-3xl font-bold inline-flex items-center gap-2">
-        <span className=" text-red-600">
-          BUYNEXT
-        </span>
-      </Link>
-    </div>
-  </div>
-
-  {/* MOBILE SEARCH BAR — now inside the same container */}
-  <div className="md:hidden w-full">
-    <div className="w-full flex items-center gap-2 mt-1">
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Search products..."
-        className="w-full rounded-full p-2 m-2 text-black outline-none bg-white/6 placeholder-white/60 border border-white/8 text-sm"
-      />
-      <button
-        onClick={handlesearchbtn}
-        disabled={!search.trim()}
-        className={`px-3 py-2  rounded-full text-sm font-semibold ${
-          !search.trim()
-            ? "opacity-40 cursor-not-allowed"
-            : "bg-red-700 text-gray-900 hover:scale-105"
-        }`}
-      >
-        <FaSearch className="text-gray-300 ml-0 m-2"/>
-      </button>
-    </div>
-  </div>
-
-</div>
-
-
-        {/* desktop search (only visible md+) */}
-        {log && (
-          <div className="hidden md:flex items-center sm:items-stretch gap-2 w-full md:w-[40%] text-white">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search products..."
-              className="w-full sm:flex-1 rounded-full p-2 m-2 outline-none bg-transparent  placeholder-white/60 border-2"
-            />
-            <button
-              onClick={handlesearchbtn}
-              disabled={!search.trim()}
-              className={`px-4 py-2 rounded-full ml-0 m-2 text-sm sm:text-base font-semibold transition-transform transform ${!search.trim() ? "opacity-40 cursor-not-allowed" : "hover:scale-105"} bg-red-700 text-white`}
-            >
-              <FaSearch className="text-gray-300"/>
+          {/* Left */}
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMenuOpen(true)} className="lg:hidden">
+              <FaBars className="text-xl text-white" />
             </button>
+
+            <Link to="/home" className="text-2xl font-bold text-white tracking-wide">
+              BUYNEXT
+            </Link>
           </div>
-        )}
-        
 
-        {/* icon group (desktop lg+) */}
-        <div className="hidden lg:flex items-center gap-8">
+          {/* Desktop Search */}
           {log && (
-            <div className="relative group">
-              <Link to="/">
-                <FaHome className="text-2xl text-red-600" />
-              </Link>
-              <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Home
-              </span>
+            <div className="hidden md:flex items-center w-[40%] relative">
+              <FaSearch
+                onClick={handlesearchbtn}
+                className="absolute right-3 text-gray-400 cursor-pointer"
+              />
+
+              <input
+                value={search}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearch(value);
+
+                  if (value.trim() === "") {
+                    navigate("/search?query=");
+                  }
+                }}
+
+                onKeyDown={handleKeyDown}
+                placeholder="Search for products"
+                className="w-full pl-10 pr-4 py-2 rounded-md outline-none text-gray-800"
+              />
             </div>
           )}
 
-          {log && (
-            <div className="relative group">
-              <Link to="/wishlist" className="flex">
-                <FaHeart className="text-2xl relative z-10 text-red-600" />
-                <span className="absolute -top-2 -right-4 bg-white/6 rounded-full text-gray-300 font-bold px-2 z-20">{wishlist.length}</span>
-              </Link>
-              <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Wishlist
-              </span>
-            </div>
-          )}
 
-          {log && (
-            <div className="relative group">
-              <Link to="/cart" className="flex">
-                <FaShoppingCart className="text-2xl font-normal relative z-10 text-red-600" />
-                <span className="absolute -top-2 -right-3 bg-white/6 rounded-full text-gray-300 font-bold px-2 z-20">{cart.length}</span>
+          {/* Desktop Icons */}
+          <div className="hidden lg:flex items-center gap-6 text-white">
+            {log && (
+              <Link to="/" className="relative group hover:scale-110 transition">
+                <FaHome className="text-xl" />
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                  Home
+                </span>
               </Link>
-              <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Cart
-              </span>
-            </div>
-          )}
+            )}
 
-          {log && (
-            <div className="relative group">
-              <Link to="/admin">
-                <FaAddressCard className="text-2xl text-red-600" />
+
+            {log && (
+              <Link to="/wishlist" className="relative group hover:scale-110 transition">
+                <FaHeart className="text-xl" />
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                  Wishlist
+                </span>
+                <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full px-1">
+                  {wishlist.length}
+                </span>
               </Link>
-              <span className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                Admin
-              </span>
-            </div>
-          )}
+            )}
 
-          {log && (
-            <div className="bg-white/6 p-2 rounded-xl">
-              <Link to="/orders" className="flex items-center text-red-600">
-                Your Orders!
-                <span className="flex items-center text-gray-300 font-extrabold rounded-full ">({orders.length})</span>
+
+            {log && (
+              <Link to="/cart" className="relative group hover:scale-110 transition">
+                <FaShoppingCart className="text-xl" />
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                  Cart
+                </span>
+                <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full px-1">
+                  {cart.length}
+                </span>
               </Link>
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* login/logout button (kept behavior) */}
-        <div>
+
+            {log && (
+              <Link to="/admin" className="relative group hover:scale-110 transition">
+                <FaAddressCard className="text-xl" />
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                  Admin
+                </span>
+              </Link>
+            )}
+
+
+            {log && (
+              <Link to="/orders" className="text-sm font-semibold hover:underline">
+                Orders ({orders.length})
+              </Link>
+            )}
+          </div>
+
+          {/* Login / Logout */}
           {log ? (
             <button
               onClick={logout}
-              className="hidden md:block ml-6 bg-red-700 px-4 py-2 rounded-full text-gray-300 hover:scale-105 transition-transform shadow"
+              className="hidden md:block bg-white text-[#0053E2] px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition"
             >
               Logout
             </button>
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="ml-2 bg-red-700 text-gray-300 px-4 py-1 rounded-full hover:scale-105 transition-transform shadow"
+              className="bg-white text-[#0053E2] px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition"
             >
               Login
             </button>
           )}
         </div>
+
+        {/* Mobile Search */}
+        {log && (
+          <div className="md:hidden px-4 pb-3 relative">
+            <FaSearch
+              onClick={handlesearchbtn}
+              className="absolute left-7 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search products"
+              className="w-full pl-10 pr-4 py-2 rounded-md outline-none text-gray-800"
+            />
+          </div>
+        )}
+
       </div>
 
-      
-      {/* Backdrop (when menu open) */}
+      {/* Backdrop */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-45 bg-black/40"
+          className="fixed inset-0 bg-black/40 z-40"
           onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
         />
       )}
 
-      {/* side menu — same structure, visual restyle only */}
-      <div className={`fixed top-0 left-0 h-full w-64 z-50 transform transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <GlassCard className="h-full p-0">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-xl font-bold">Menu</h2>
-            <button onClick={() => setMenuOpen(false)} aria-label="Close menu">
-              <FaTimes size={24} className="cursor-pointer" />
-            </button>
-          </div>
-          <ul className="p-4 space-y-6 text-lg">
-            <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
-            {log && <li><Link to="/wishlist" onClick={() => setMenuOpen(false)}>Wishlist ({wishlist.length})</Link></li>}
-            {log && <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Cart ({cart.length})</Link></li>}
-            <li><Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link></li>
-            {log && <li><Link to="/orders" onClick={() => setMenuOpen(false)}>Orders ({orders.length})</Link></li>}
-            <li>
-              {log ? (
-                <button onClick={logout} className="text-white">Logout</button>
-              ) : (
-                <button onClick={() => { navigate("/login"); setMenuOpen(false); }}>Login</button>
-              )}
-            </li>
-          </ul>
-        </GlassCard>
-      </div>
+      {/* Side Menu */}
+      <div
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-[#0053E2] text-white shadow-lg transform transition-transform ${menuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+      >
+        <div className="flex justify-between items-center p-4 border-b border-white/20">
+          <h2 className="font-bold text-lg">Menu</h2>
+          <FaTimes onClick={() => setMenuOpen(false)} className="cursor-pointer" />
+        </div>
 
-      {/* small tooltip + glass styles (keeps file self-contained) */}
-      <style>{`
-        .glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(6px); }
-        .tooltip { position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%); background: rgba(17,24,39,0.9); color: white; padding: 6px 8px; border-radius: 6px; font-size: 12px; opacity: 0; transition: opacity .18s; pointer-events: none; white-space: nowrap; }
-        .group:hover .tooltip { opacity: 1; }
-      `}</style>
+        <ul className="p-4 space-y-4">
+          <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
+          {log && <li><Link to="/wishlist" onClick={() => setMenuOpen(false)}>Wishlist</Link></li>}
+          {log && <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Cart</Link></li>}
+          <li><Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link></li>
+          {log && <li><Link to="/orders" onClick={() => setMenuOpen(false)}>Orders</Link></li>}
+          <li>
+            {log ? (
+              <button onClick={logout} className="font-semibold">
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  navigate("/login");
+                  setMenuOpen(false);
+                }}
+                className="font-semibold"
+              >
+                Login
+              </button>
+            )}
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

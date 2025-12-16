@@ -104,7 +104,7 @@ const CheckoutPage = () => {
   const incQty = (it) => updateqty?.(it._id, (it.qty ?? 1) + 1);
 
   return (
-    <AppTheme>
+    
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br p-4">
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-10">
           <h2 className="text-3xl font-extrabold mb-6 text-center text-black">Checkout</h2>
@@ -128,7 +128,7 @@ const CheckoutPage = () => {
                       </div>
                       <div>
                         <div className="font-medium text-black">{it.desc}</div>
-                        <div className="text-sm text-gray-500">${it.price}</div>
+                        <div className="text-sm text-gray-700">${it.price}</div>
                       </div>
                     </div>
 
@@ -219,7 +219,7 @@ const CheckoutPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-red-700 text-gray-300 font-semibold py-3 rounded-lg hover:bg-red-600 hover:text-black transition disabled:opacity-60"
+              className="w-fit bg-blue-700 text-gray-300 mx-auto font-semibold py-3 px-4 flex justify-center rounded-lg hover:bg-blue-600 hover:text-black transition disabled:opacity-60"
               disabled={submitting}
             >
               {submitting ? "Placing order..." : "Place Order"}
@@ -227,7 +227,7 @@ const CheckoutPage = () => {
           </form>
         </div>
       </div>
-    </AppTheme>
+    
   );
 };
 

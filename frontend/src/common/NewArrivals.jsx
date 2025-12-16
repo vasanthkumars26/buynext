@@ -35,12 +35,12 @@ export default function NewArrivals({ limit = 6 }) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-      <h2 className="text-2xl font-bold text-white mb-4">New Arrivals</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-start">
+      <h2 className="text-2xl font-bold text-black mb-4">New Arrivals</h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-start ">
         {products.map((p) => (
           <div
             key={p._id}
-            className="relative bg-white/5 rounded-2xl p-3 cursor-pointer hover:scale-105 transition"
+            className="relative  rounded-2xl p-3 cursor-pointer hover:scale-105 transition bg-slate-100 shadow-md"
             onClick={() => navigate(`/product/${p._id}`, { state: { product: p } })}
           >
             {/* Wishlist icon top-right */}
@@ -51,7 +51,7 @@ export default function NewArrivals({ limit = 6 }) {
                 else addToWishlist(p);
               }}
               className={`absolute top-3 right-3 z-10 p-2 rounded-full transition ${
-                isWishlisted(p) ? "bg-red-500 text-white" : "bg-white/6 text-white/90"
+                isWishlisted(p) ? "bg-red-500 text-white" : "border border-black text-xs  bg-white/6 "
               }`}
               title={isWishlisted(p) ? "Remove from wishlist" : "Add to wishlist"}
             >
@@ -68,8 +68,8 @@ export default function NewArrivals({ limit = 6 }) {
             </div>
 
             {/* Product info */}
-            <div className="text-white/90 font-semibold truncate">{p.desc}</div>
-            <div className="text-red-600 font-bold mt-1">${p.price}</div>
+            <div className="text-blue-600 font-semibold truncate">{p.desc}</div>
+            <div className="text-blue-900 font-bold mt-1">${p.price}</div>
 
             {/* Actions (Add to cart) */}
             <div className="mt-3 flex items-center justify-between gap-2">
@@ -79,7 +79,7 @@ export default function NewArrivals({ limit = 6 }) {
                   if (!isInCart(p)) addtoCart(p);
                 }}
                 className={`flex items-center gap-2 px-3 py-2 rounded-2xl text-sm font-medium transition ${
-                  isInCart(p) ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-white/90"
+                  isInCart(p) ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black"
                 }`}
                 title={isInCart(p) ? "Already in cart" : "Add to cart"}
                 aria-pressed={isInCart(p)}

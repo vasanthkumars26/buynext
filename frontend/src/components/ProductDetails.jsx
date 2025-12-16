@@ -63,7 +63,7 @@ export default function ProductDetails() {
                     <FaChevronLeft /> Back
                 </button>
                 <div className="glass-dark rounded-2xl p-6">
-                    <p className="text-sm text-gray-300">Loading product…</p>
+                    <p className="text-sm text-black">Loading product…</p>
                 </div>
             </div>
         );
@@ -76,9 +76,9 @@ export default function ProductDetails() {
                     <FaChevronLeft /> Back
                 </button>
                 <div className="glass-dark rounded-2xl p-6">
-                    <h2 className="text-lg font-semibold">Product not found</h2>
-                    <p className="text-sm text-gray-300 mt-2">We couldn't find that product. It may have been removed or the ID is incorrect.</p>
-                    <Link to="/" className="mt-4 inline-block text-sm underline">Return to shop</Link>
+                    <h2 className="text-lg font-semibold text-black">Product not found</h2>
+                    <p className="text-sm text-black mt-2">We couldn't find that product. It may have been removed or the ID is incorrect.</p>
+                    <Link to="/" className="mt-4 inline-block text-sm underline text-blue-500">Return to shop</Link>
                 </div>
             </div>
         );
@@ -88,7 +88,7 @@ export default function ProductDetails() {
     const isInCart = cart?.some((c) => String(c._id) === String(product._id));
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
+        <div className="p-6 max-w-6xl mx-auto mt-[7%] text-start">
             <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 mb-6 px-3 py-2 rounded-lg bg-white/6">
                 <FaChevronLeft /> Back
             </button>
@@ -126,13 +126,13 @@ export default function ProductDetails() {
                 {/* Right: details */}
                 <div>
                     <div className="glass-dark rounded-2xl p-6 text-start">
-                        <h1 className="text-2xl md:text-3xl font-bold text-white/95">{product.desc}</h1>
-                        <p className="text-sm text-gray-300 mt-2">Category: <span className="font-medium text-white/90">{product.category || "N/A"}</span></p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-black">{product.desc}</h1>
+                        <p className="text-sm text-black mt-2">Category: <span className="font-medium text-white/90">{product.category || "N/A"}</span></p>
 
                         <div className="mt-4 flex items-center justify-between gap-4">
                             <div>
                                 <p className="text-2xl font-extrabold">${product.price}</p>
-                                <p className="text-sm text-gray-400 mt-1">Inclusive of taxes (where applicable)</p>
+                                <p className="text-sm text-blue-400 mt-1">Inclusive of taxes (where applicable)</p>
                             </div>
                         </div>
 
@@ -140,7 +140,7 @@ export default function ProductDetails() {
                             <motion.button
                                 whileTap={{ scale: 0.97 }}
                                 onClick={() => isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-white/6 text-white/90 shadow-md"}`}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-white/6 text-black shadow-md"}`}
                             >
                                 <FaHeart /> {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
                             </motion.button>
@@ -148,7 +148,7 @@ export default function ProductDetails() {
                             <motion.button
                                 whileTap={{ scale: 0.97 }}
                                 onClick={() => { if (!isInCart) addtoCart(product); }}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-white/90 border border-white/8 hover:shadow-md"}`}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
                                 aria-pressed={!!isInCart}
                             >
                                 <FaShoppingCart /> {isInCart ? "Added" : "Add to cart"}
@@ -156,18 +156,18 @@ export default function ProductDetails() {
                         </div>
 
                         <div className="mt-6">
-                            <h3 className="text-lg font-semibold">Product details</h3>
-                            <p className="text-sm text-gray-300 mt-2">{product.longDesc || product.desc || "No extended description available."}</p>
+                            <h3 className="text-lg font-semibold ">Product details</h3>
+                            <p className="text-sm text-blue-600 mt-2">{product.longDesc || product.desc || "No extended description available."}</p>
                         </div>
 
                         <div className="mt-6 flex gap-3">
-                            <Link to="/" className="px-3 py-2 rounded-lg bg-white/6 inline-block">Continue shopping</Link>
+                            <Link to="/" className="px-3 py-2 rounded-lg bg-gray-300 inline-block">Continue shopping</Link>
                             <button
                                 onClick={() => {
                                     if (!isInCart) addtoCart(product);
                                     navigate("/checkout", { state: { product } });
                                 }}
-                                className="px-3 py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-500 text-gray-900 font-semibold"
+                                className="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 text-gray-900 font-semibold"
                             >
                                 Go to checkout
                             </button>
@@ -188,15 +188,15 @@ export default function ProductDetails() {
                                 key={p._id}
                                 to={`/product/${p._id}`}
                                 state={{ product: p }}
-                                className="glass rounded-lg p-3 block"
+                                className="shadow-xl bg-slate-200 rounded-lg p-3 block"
                                 aria-label={`View details for ${p.desc}`}
                                 rel="noopener"
                             >
                                 <div className="w-full aspect-[1/1] overflow-hidden rounded-md">
                                     <img src={p.img || "https://via.placeholder.com/200"} alt={p.desc ?? "Product image"} className="w-full h-full object-cover" />
                                 </div>
-                                <p className="text-sm font-medium mt-2 text-white/95">{p.desc}</p>
-                                <p className="text-sm text-gray-300">${p.price}</p>
+                                <p className="text-sm font-medium mt-2 text-black">{p.desc}</p>
+                                <p className="text-sm text-blue-700">${p.price}</p>
                             </Link>
                         ))}
                 </div>
