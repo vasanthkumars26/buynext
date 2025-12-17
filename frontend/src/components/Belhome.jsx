@@ -286,17 +286,14 @@ import {
   FaShoppingCart,
   FaTemperatureHigh,
   FaWater,
-  FaShoppingBag,
-  FaHeart,
   FaRegHeart,
+  FaHeart,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "../context/Cartcon";
-import Wishlist from "./Wishlist";
 
 const Belhome = () => {
-  // NOTE: added safe defaults for arrays so .map/.filter won't crash if context is still loading
   const {
     addToWishlist,
     removeFromWishlist,
@@ -306,114 +303,100 @@ const Belhome = () => {
     cart = [],
   } = useCart();
 
+  // Added unique 'id' to each product for backend/context matching
   const costumes = [
-    { _id: 1, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg?v=1597047059", desc: "Structured Fedora Hat", price: 18.47, category: "Caps", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 2, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg?v=1597046790", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 3, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11_329e9eaa-7056-4ee4-a8f8-1b6cd01a4ffe.jpg?v=1597047746", desc: "Long Sleeve Sweatshirts", price: 15.47, category: "Hoodies", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 4, img: "https://lacozt.myshopify.com/cdn/shop/products/Product12_90960967-e37e-4f11-ab69-4e876a3704ff.jpg?v=1597047912", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps", btn1: "Wishlist", btn2: "Add to Cart", },
-  ];
-
-  const fimage1 = [{ img: "https://lacozt.myshopify.com/cdn/shop/files/section-bgimage1.jpg?v=1614294611", desc: "BigSale up to 30% off", titl: "Shop for great Selection of T-Shirts", btna: "Shop now", }];
-
-  const fimage = [
-    { img: "https://images.pexels.com/photos/102129/pexels-photo-102129.jpeg", desc: "NEW ARRIVALS", titl: "TOUCH OF COLOR", btna: "Shop now", },
-    { img: "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg", desc: "DISCOVER THEM ALL", titl: "THIS SEASON'S BOMBER JACKETS", btna: "Shop now", },
-  ];
-
-  const imagefooter = [
-    { heading: "Order online & get it today", btn: "Shop now >", },
-    { heading: "BACO 50% off Branded Tees", btn: "Shop now >", },
-    { heading: "20% off on Export Tees", btn: "Shop now >", },
-  ];
-
-  const imagefooter2 = [
-    { heading: "FREE SHIPPING", subhead: "Gentle or Delicate Washing", icon: <FaWater /> },
-    { heading: "Ironing Temparature", subhead: "Iron at maximum 150C or 300F", icon: <FaTemperatureHigh /> },
-    { heading: "Water Temparature", subhead: "Wash at Below 30C or 80F", icon: <FaWater /> },
+    { id: 101, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg?v=1597047059", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
+    { id: 102, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg?v=1597046790", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
+    { id: 103, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11_329e9eaa-7056-4ee4-a8f8-1b6cd01a4ffe.jpg?v=1597047746", desc: "Long Sleeve Sweatshirts", price: 15.47, category: "Hoodies" },
+    { id: 104, img: "https://lacozt.myshopify.com/cdn/shop/products/Product12_90960967-e37e-4f11-ab69-4e876a3704ff.jpg?v=1597047912", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps" },
   ];
 
   const pow = [
-    { _id: 5, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11_329e9eaa-7056-4ee4-a8f8-1b6cd01a4ffe.jpg?v=1597047746", desc: "Pull Over Hoodie", price: 12.47, category: "Hoodies", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 6, img: "https://diesel.ie/cdn/shop/files/FadiaTeeT25061FF_4_533x.jpg?v=1741710096", desc: "Women's Ribbed T-Shirt", price: 19.37, category: "T-Shirts", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 7, img: "https://cdn11.bigcommerce.com/s-1xod74bove/images/stencil/1280x1280/attribute_rule_images/23931_source_1736466569.jpg", desc: "Men's Pullover Hoodie", price: 13.67, category: "Hoodies", btn1: "Wishlist", btn2: "Add to Cart", },
-    { _id: 8, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg?v=1680848440&width=360", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts", btn1: "Wishlist", btn2: "Add to Cart", },
+    { id: 201, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11_329e9eaa-7056-4ee4-a8f8-1b6cd01a4ffe.jpg?v=1597047746", desc: "Pull Over Hoodie", price: 12.47, category: "Hoodies" },
+    { id: 202, img: "https://diesel.ie/cdn/shop/files/FadiaTeeT25061FF_4_533x.jpg?v=1741710096", desc: "Women's Ribbed T-Shirt", price: 19.37, category: "T-Shirts" },
+    { id: 203, img: "https://cdn11.bigcommerce.com/s-1xod74bove/images/stencil/1280x1280/attribute_rule_images/23931_source_1736466569.jpg", desc: "Men's Pullover Hoodie", price: 13.67, category: "Hoodies" },
+    { id: 204, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg?v=1680848440&width=360", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts" },
+  ];
+
+  const fimage1 = [{ img: "https://lacozt.myshopify.com/cdn/shop/files/section-bgimage1.jpg?v=1614294611", desc: "BigSale up to 30% off", titl: "Shop for great Selection of T-Shirts", btna: "Shop now" }];
+  const fimage = [
+    { img: "https://images.pexels.com/photos/102129/pexels-photo-102129.jpeg", desc: "NEW ARRIVALS", titl: "TOUCH OF COLOR", btna: "Shop now" },
+    { img: "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg", desc: "DISCOVER THEM ALL", titl: "THIS SEASON'S BOMBER JACKETS", btna: "Shop now" },
+  ];
+  const imagefooter = [
+    { heading: "Order online & get it today", btn: "Shop now >" },
+    { heading: "BACO 50% off Branded Tees", btn: "Shop now >" },
+    { heading: "20% off on Export Tees", btn: "Shop now >" },
+  ];
+  const imagefooter2 = [
+    { heading: "FREE SHIPPING", subhead: "Gentle or Delicate Washing", icon: <FaWater /> },
+    { heading: "Ironing Temperature", subhead: "Iron at maximum 150C or 300F", icon: <FaTemperatureHigh /> },
+    { heading: "Water Temperature", subhead: "Wash at Below 30C or 80F", icon: <FaWater /> },
   ];
 
   const [filter, setFilter] = useState("All");
 
-  // guard allproducts in case it's not yet loaded
-  const safeAllProducts = Array.isArray(allproducts) ? allproducts : [];
-  const filtered = filter === "All" ? safeAllProducts : safeAllProducts.filter((item) => item.category === filter);
+  // Filter logic updated to use local costumes + pow if allproducts is empty
+  const displayProducts = filter === "All" ? [...costumes, ...pow] : [...costumes, ...pow].filter(item => item.category === filter);
 
   const WishlistButton = ({ product }) => {
-    const isWishlisted = Array.isArray(wishlist) && wishlist.find((item) => item._id === product._id);
+    const isWishlisted = wishlist?.some((item) => item.id === product.id);
     return (
       <motion.button
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
-        onClick={() => (isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product))}
-        className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-gray-100 text-black  shadow-md"}`}
+        onClick={() => (isWishlisted ? removeFromWishlist(product.id) : addToWishlist(product))}
+        className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-gray-100 text-black shadow-md"}`}
       >
-        <FaRegHeart />
+        {isWishlisted ? <FaHeart /> : <FaRegHeart />}
       </motion.button>
     );
   };
 
   return (
-    // prevent horizontal overflow at page-level and ensure full-bleed gradient from AppTheme doesn't create scroll
     <div className="overflow-x-hidden">
-      <div className="mt-6   mx-auto w-full text-white box-border">
+      <div className="mt-6 mx-auto w-full text-white box-border p-4">
         <header className="text-center mb-4">
           <h1 className="text-2xl sm:text-3xl text-black md:text-4xl font-bold">Summer Collection</h1>
           <p className="text-base sm:text-lg md:text-xl font-semibold text-black mt-2">Clothes & Accessories</p>
         </header>
 
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6 text-gray-300">
+        {/* Category Filters */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-6">
           {["All", "Hoodies", "T-Shirts", "Caps"].map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium transition-all ${filter === cat ? "bg-gray-300 text-blue-900 shadow-lg" : "bg-white/6 text-blue-700 hover:bg-white/10"}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${filter === cat ? "bg-blue-700 text-white shadow-lg" : "bg-gray-200 text-blue-700 hover:bg-gray-300"}`}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        {/* Products grid */} 
+        {/* Dynamic Products Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {filtered.map((costume) => {
-            const isInCart = Array.isArray(cart) && cart.find((c) => c._id === costume._id);
+          {displayProducts.map((product) => {
+            const isInCart = cart?.some((c) => c.id === product.id);
             return (
               <motion.article
-                key={costume._id}
-                whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
-                transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="bg-transparent glass-dark rounded-2xl p-3 w-full bg-slate-100 shadow-md"
+                key={product.id}
+                whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
+                className="bg-slate-100 rounded-2xl p-3 w-full shadow-md border border-gray-200"
               >
-                {/* CLICKABLE: image + title open product details route (passes product in state). This does NOT change add-to-cart/wishlist behaviour */}
-                <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
-                  <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
-                    <img
-                      src={costume.img}
-                      alt={costume.desc}
-                      className="w-full h-full object-cover block max-w-full"
-                    />
+                <Link to={`/product/${product.id}`} state={{ product }} className="block">
+                  <div className="w-full aspect-square overflow-hidden rounded-xl bg-white">
+                    <img src={product.img} alt={product.desc} className="w-full h-full object-cover" />
                   </div>
-
-                  <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
+                  <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base">{product.desc}</h2>
                 </Link>
-
-                <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
-
-                <div className="flex gap-2 sm:gap-3 mt-3">
-                  <WishlistButton product={costume} />
+                <p className="text-blue-900 font-bold mt-1">${product.price}</p>
+                <div className="flex gap-2 mt-3">
+                  <WishlistButton product={product} />
                   <motion.button
-                    whileHover={{ scale: isInCart ? 1 : 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => { if (!isInCart) addtoCart(costume); }}
-                    className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
-                    aria-pressed={!!isInCart}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => !isInCart && addtoCart(product)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-blue-600 text-white hover:bg-blue-700"}`}
                   >
                     {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
                   </motion.button>
@@ -423,146 +406,42 @@ const Belhome = () => {
           })}
         </section>
 
-        {/* Featured banner */} 
-        {fimage1.map((img, index) => (
-          <div key={index} className="relative mt-10 rounded-2xl overflow-hidden w-full">
-            <img src={img.img} alt="fimage" className="w-full h-40 sm:h-48 md:h-64 object-cover block max-w-full" />
-            <div className="absolute inset-0 flex flex-col justify-center items-start p-4 sm:p-6 md:p-12 bg-gradient-to-r from-black/35 to-black/10">
-              <p className="text-sm md:text-lg font-semibold text-blue-300">{img.desc}</p>
-              <p className="text-base sm:text-lg md:text-2xl font-bold text-white mt-2">{img.titl}</p>
-              <Link to="/" className="mt-4 inline-block px-3 py-2 rounded-2xl bg-gray-300 text-gray-900 font-semibold text-xs sm:text-sm">
-                {img.btna}
-              </Link>
+        {/* Featured Banners */}
+        {fimage1.map((img, i) => (
+          <div key={i} className="relative mt-10 rounded-2xl overflow-hidden">
+            <img src={img.img} alt="banner" className="w-full h-48 md:h-64 object-cover" />
+            <div className="absolute inset-0 bg-black/30 flex flex-col justify-center p-8">
+              <p className="text-blue-300 font-semibold">{img.desc}</p>
+              <h2 className="text-white text-xl md:text-3xl font-bold mt-2">{img.titl}</h2>
+              <button className="mt-4 w-fit px-6 py-2 bg-white text-black rounded-full font-bold">{img.btna}</button>
             </div>
           </div>
         ))}
 
-        {/* Image footer (three promotions) */} 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {imagefooter.map((item, index) => (
-            <div key={index} className="glass-dark bg-blue-700 rounded-xl p-4 flex flex-col items-start">
-              <h3 className="text-gray-300 font-semibold text-base sm:text-lg md:text-xl">{item.heading}</h3>
-              <button className="mt-2 text-black text-sm sm:text-base">{item.btn}</button>
+        {/* Promo Grid */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {imagefooter.map((item, i) => (
+            <div key={i} className="bg-blue-700 rounded-xl p-6 text-white">
+              <h3 className="font-bold text-lg">{item.heading}</h3>
+              <button className="mt-3 text-sm underline">{item.btn}</button>
             </div>
           ))}
         </div>
 
-        {/* Top View in This Week */} 
-        <section className="mt-10">
-          <h2 className="text-lg sm:text-xl md:text-2xl text-black font-semibold">Top view in this week</h2>
-          <p className="text-base sm:text-lg md:text-xl font-bold text-black mt-2">Product of the week</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4 ">
-            {costumes.map((costume) => {
-              const isInCart = Array.isArray(cart) && cart.find((c) => c._id === costume._id);
-              return (
-                <motion.article
-                  key={costume._id}
-                  whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
-                  transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className="bg-transparent glass-dark rounded-2xl p-3 w-full bg-slate-100 shadow-md"
-                >
-                  {/* CLICKABLE: image + title open product details route */} 
-                  <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
-                    <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
-                      <img src={costume.img} alt={costume.desc} className="w-full h-full object-cover block max-w-full" />
-                    </div>
-                    <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
-                  </Link>
-
-                  <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
-                  <div className="flex gap-2 sm:gap-3 mt-3">
-                    <WishlistButton product={costume} />
-                    <motion.button
-                      whileHover={{ scale: isInCart ? 1 : 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => { if (!isInCart) addtoCart(costume); }}
-                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
-                      aria-pressed={!!isInCart}
-                    >
-                      {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
-                    </motion.button>
-                  </div>
-                </motion.article>
-              );
-            })}
-          </div>
-
-          {/* More products (pow) */} 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4 ">
-            {pow.map((costume) => {
-              const isInCart = Array.isArray(cart) && cart.find((c) => c._id === costume._id);
-              return (
-                <motion.article
-                  key={costume._id}
-                  whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(2,6,23,0.5)" }}
-                  transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className=" rounded-2xl p-3 w-full bg-slate-100 shadow-md"
-                >
-                  {/* CLICKABLE: image + title open product details route */} 
-                  <Link to={`/product/${costume._id}`} state={{ product: costume }} className="block">
-                    <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
-                      <img src={costume.img} alt={costume.desc} className="w-full h-full object-cover block max-w-full" />
-                    </div>
-                    <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base text-start">{costume.desc}</h2>
-                  </Link>
-
-                  <p className="text-blue-900 font-bold mt-1 text-sm sm:text-base text-start">${costume.price}</p>
-                  <div className="flex gap-2 sm:gap-3 mt-3">
-                    <WishlistButton product={costume} />
-                    <motion.button
-                      whileHover={{ scale: isInCart ? 1 : 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => { if (!isInCart) addtoCart(costume); }}
-                      className={`flex items-center gap-2 px-2 sm:px-3 py-2 rounded-2xl text-xs sm:text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
-                      aria-pressed={!!isInCart}
-                    >
-                      {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
-                    </motion.button>
-                  </div>
-                </motion.article>
-              );
-            })}
-          </div>
-
-          {/* Two large feature images */} 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 text-start">
-            {fimage.map((img, index) => (
-              <div key={index} className="relative rounded-2xl overflow-hidden w-full">
-                <img src={img.img} alt="fimage" className="w-full h-48 sm:h-64 md:h-72 lg:h-80 object-cover block max-w-full" />
-                <div className="absolute inset-0 flex flex-col justify-center items-start p-4 sm:p-6 md:p-12 bg-gradient-to-r from-black/35 to-transparent">
-                  <p className="text-white font-bold text-sm sm:text-base md:text-lg">{img.desc}</p>
-                  <p className="text-white text-lg sm:text-2xl md:text-3xl font-bold mt-2">{img.titl}</p>
-                  <Link to="/" className="mt-4 inline-block px-3 py-2 rounded-2xl bg-gray-300 text-gray-900 font-semibold text-xs sm:text-sm">
-                    {img.btna}
-                  </Link>
-                </div>
+        {/* Info Icons Footer */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+          {imagefooter2.map((item, i) => (
+            <div key={i} className="bg-slate-100 border border-gray-200 rounded-xl p-5 flex items-center gap-4">
+              <div className="text-blue-700 text-3xl">{item.icon}</div>
+              <div>
+                <h4 className="text-black font-bold">{item.heading}</h4>
+                <p className="text-gray-600 text-sm">{item.subhead}</p>
               </div>
-            ))}
-          </div>
-
-          {/* bottom icons/footer info */} 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 text-start">
-            {imagefooter2.map((item, index) => (
-              <div key={index} className="glass-dark bg-blue-700 rounded-xl p-4 flex gap-4 items-center m-4">
-                <p className="text-white text-2xl">{item.icon}</p>
-                <div>
-                  <h1 className="text-white/95 font-semibold md:text-lg">{item.heading}</h1>
-                  <p className="text-white/80 text-sm md:text-base">{item.subhead}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* inline styles for glass effect (keeps consistent with AppTheme) */} 
-        <style>{`
-  :root, body, #root {
-    overflow-x: hidden;
-    background: white;
-  }
-`}</style>
+            </div>
+          ))}
+        </div>
       </div>
+      <style>{`body { background: white; color: black; }`}</style>
     </div>
   );
 };
