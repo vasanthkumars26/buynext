@@ -16,7 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// ------------------ DATABASE CONNECTION ------------------
+// ------------------ DATABASE CONNECTION (Vercel Optimized) ------------------
 let cached = global.mongoose;
 if (!cached) cached = global.mongoose = { conn: null, promise: null };
 
@@ -24,11 +24,17 @@ async function connectDB() {
   if (cached.conn) return cached.conn;
   if (!cached.promise) {
     cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: true,
-      dbName: "buynext"
+      bufferCommands: false, // Set to false to prevent hanging on connection drops
+      dbName: "buynext",
+      serverSelectionTimeoutMS: 5000, // Fail fast (5s) instead of timing out Vercel (10s)
     }).then(m => m);
   }
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null; // Reset if connection fails
+    throw e;
+  }
   return cached.conn;
 }
 
@@ -38,8 +44,6 @@ connectDB()
   .catch(err => console.error("DB Connection Error:", err));
 
 // ------------------ SCHEMAS ------------------
-
-// CART SCHEMA - Added 'id' to match frontend logic
 const cartschema = new mongoose.Schema({
   id: Number, 
   desc: String,
@@ -49,7 +53,6 @@ const cartschema = new mongoose.Schema({
   category: String,
 }, { versionKey: false });
 
-// USER SCHEMA
 const userSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -57,18 +60,13 @@ const userSchema = new mongoose.Schema({
   address: String,
 });
 
-// ORDER SCHEMA
-const orderschema = new mongoose.Schema(
-  {
-    userDetails: userSchema,
-    items: Array, 
-    total: Number,
-    date: { type: Date, default: Date.now },
-  },
-  { versionKey: false }
-);
+const orderschema = new mongoose.Schema({
+  userDetails: userSchema,
+  items: Array, 
+  total: Number,
+  date: { type: Date, default: Date.now },
+}, { versionKey: false });
 
-// BLOG SCHEMA
 const blogschema = new mongoose.Schema({
   newTitle: String,
   newContent: String,
@@ -93,7 +91,7 @@ app.get("/cart", async (req, res) => {
     const cartItems = await Cart.find();
     res.json(cartItems);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Database Connection Error" });
   }
 });
 
@@ -102,7 +100,6 @@ app.post("/cart", async (req, res) => {
     await connectDB();
     const { id, desc } = req.body;
 
-    // Search by custom 'id' OR 'desc' to prevent duplicates
     const existing = await Cart.findOne({ $or: [{ id: id }, { desc: desc }] });
 
     if (existing) {
@@ -111,26 +108,24 @@ app.post("/cart", async (req, res) => {
       return res.json(existing);
     }
 
-    // Clean the data: remove any frontend-generated _id
     const dataToSave = { ...req.body };
-    delete dataToSave._id;
+    delete dataToSave._id; // Prevent collision with MongoDB's auto-generated _id
 
     const item = new Cart(dataToSave);
     const savedItem = await item.save();
     res.status(201).json(savedItem);
   } catch (err) {
-    console.error("Cart POST error:", err);
-    res.status(500).json({ message: "Database Error", error: err.message });
+    res.status(500).json({ message: "Cart POST error", error: err.message });
   }
 });
 
 app.put("/cart/:id", async (req, res) => {
   try {
+    const { id } = req.params;
+    if (!id || id === "undefined") return res.status(400).json({ message: "Invalid ID provided" });
+
     await connectDB();
-    // Handles both MongoDB _id and custom numeric id
-    const filter = mongoose.Types.ObjectId.isValid(req.params.id) 
-                   ? { _id: req.params.id } 
-                   : { id: req.params.id };
+    const filter = mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { id: id };
 
     const updated = await Cart.findOneAndUpdate(filter, req.body, { new: true });
     res.json(updated);
@@ -141,10 +136,11 @@ app.put("/cart/:id", async (req, res) => {
 
 app.delete("/cart/:id", async (req, res) => {
   try {
+    const { id } = req.params;
+    if (!id || id === "undefined") return res.status(400).json({ message: "Invalid ID provided" });
+
     await connectDB();
-    const filter = mongoose.Types.ObjectId.isValid(req.params.id) 
-                   ? { _id: req.params.id } 
-                   : { id: req.params.id };
+    const filter = mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { id: id };
 
     await Cart.findOneAndDelete(filter);
     res.json({ message: "DELETED SUCCESSFULLY" });
@@ -168,7 +164,7 @@ app.post("/orders", async (req, res) => {
   try {
     await connectDB();
     
-    // Crucial: Strip MongoDB IDs from cart items to avoid duplication in the Order collection
+    // Strip _id from cart items to avoid duplication errors when saving into Order collection
     const orderData = {
         ...req.body,
         items: req.body.items.map(item => {
@@ -180,17 +176,15 @@ app.post("/orders", async (req, res) => {
     const ord = new Order(orderData);
     const savedord = await ord.save();
 
-    // Clear the cart database after order is placed
     await Cart.deleteMany({}); 
 
     res.status(201).json(savedord);
   } catch (err) {
-    console.error("Order Save Error:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-// BLOG ROUTES (Kept as requested)
+// BLOG ROUTES
 app.get("/api/blogs", async (req, res) => {
   try {
     await connectDB();
@@ -228,7 +222,6 @@ app.patch("/api/blogs/like/:id", async (req, res) => {
   }
 });
 
-// ------------------ SERVER ------------------
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => {
@@ -237,7 +230,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 module.exports = app;
-
 
 // require('dotenv').config();
 // const express = require("express");
