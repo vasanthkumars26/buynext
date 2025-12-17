@@ -303,7 +303,7 @@ const Belhome = () => {
     cart = [],
   } = useCart();
 
-  // Added unique 'id' to each product for backend/context matching
+  // Unique 'id' matched with Context to prevent duplicates
   const costumes = [
     { id: 101, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg?v=1597047059", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
     { id: 102, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg?v=1597046790", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
@@ -319,15 +319,13 @@ const Belhome = () => {
   ];
 
   const fimage1 = [{ img: "https://lacozt.myshopify.com/cdn/shop/files/section-bgimage1.jpg?v=1614294611", desc: "BigSale up to 30% off", titl: "Shop for great Selection of T-Shirts", btna: "Shop now" }];
-  const fimage = [
-    { img: "https://images.pexels.com/photos/102129/pexels-photo-102129.jpeg", desc: "NEW ARRIVALS", titl: "TOUCH OF COLOR", btna: "Shop now" },
-    { img: "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg", desc: "DISCOVER THEM ALL", titl: "THIS SEASON'S BOMBER JACKETS", btna: "Shop now" },
-  ];
+  
   const imagefooter = [
     { heading: "Order online & get it today", btn: "Shop now >" },
     { heading: "BACO 50% off Branded Tees", btn: "Shop now >" },
     { heading: "20% off on Export Tees", btn: "Shop now >" },
   ];
+  
   const imagefooter2 = [
     { heading: "FREE SHIPPING", subhead: "Gentle or Delicate Washing", icon: <FaWater /> },
     { heading: "Ironing Temperature", subhead: "Iron at maximum 150C or 300F", icon: <FaTemperatureHigh /> },
@@ -336,7 +334,6 @@ const Belhome = () => {
 
   const [filter, setFilter] = useState("All");
 
-  // Filter logic updated to use local costumes + pow if allproducts is empty
   const displayProducts = filter === "All" ? [...costumes, ...pow] : [...costumes, ...pow].filter(item => item.category === filter);
 
   const WishlistButton = ({ product }) => {

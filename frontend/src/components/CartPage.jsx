@@ -1,155 +1,145 @@
-// frontend/src/components/CartPage.jsx
 import React from "react";
 import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/Cartcon";
 import { motion } from "framer-motion";
-import AppTheme from "../common/Apptheme";
+import { useCart } from "../context/Cartcon";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { cart, updateqty, removeFromCart, placeorder, setCart } = useCart();
 
-  const handlecheckout = () => {
-    navigate("/checkout");
-  };
+  // IMPORTANT: updateqty(productId, mongoId, qty)
+  const { cart, updateqty, removeFromCart, setCart } = useCart();
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const handleCheckout = () => navigate("/checkout");
 
-  if (cart.length === 0) {
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * item.qty,
+    0
+  );
+
+  /* ---------------- EMPTY CART ---------------- */
+  if (!cart || cart.length === 0) {
     return (
-      <motion.h2
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="text-center mt-[34%] md:mt-[10%] text-xl text-black"
+      <motion.div
+        className="flex flex-col items-center justify-center min-h-[60vh]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
-        Your cart is empty
-      </motion.h2>
+        <h2 className="text-2xl font-semibold text-gray-500">
+          Your cart is empty
+        </h2>
+        <button
+          onClick={() => navigate("/")}
+          className="mt-4 px-6 py-2 bg-blue-900 text-white rounded-full"
+        >
+          Go Shopping
+        </button>
+      </motion.div>
     );
   }
 
   return (
     <motion.div
-      className="max-w-5xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] lg:mt-[10%] px-4"
-      initial={{ opacity: 0, y: 40 }}
+      className="max-w-5xl mt-[32%] mx-auto sm:mt-[16%] md:mt-[10%] px-4 pb-20"
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <motion.h1
-        className="text-3xl font-extrabold mb-6 text-black"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-      >
-        Your Cart
-      </motion.h1>
+      <h1 className="text-3xl font-extrabold mb-8">Your Cart</h1>
 
-      <motion.div
-        className="space-y-6 text-start"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: {
-            transition: { staggerChildren: 0.08 }
-          }
-        }}
-      >
-        {cart.map((item) => (
+      {/* ---------------- CART ITEMS ---------------- */}
+      <div className="space-y-4">
+        {cart.map((item, index) => (
           <motion.div
-            key={item._id}
-            variants={{
-              hidden: { opacity: 0, y: 25 },
-              visible: { opacity: 1, y: 0 }
-            }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-100 rounded-2xl p-4 gap-4"
+            key={`${item._id || "local"}-${item.id}`} // ✅ SAFE UNIQUE KEY
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="flex flex-col sm:flex-row items-center justify-between bg-white border rounded-2xl p-4 shadow-sm gap-4"
           >
+            {/* Product Info */}
             <div className="flex items-center gap-4 w-full sm:w-auto">
               <img
                 src={item.img}
                 alt={item.desc}
-                className="w-full max-w-[120px] h-28 object-cover rounded-lg"
+                className="w-24 h-24 object-cover rounded-xl"
               />
-              <div className="flex-1">
-                <h2 className="font-semibold text-black">{item.desc}</h2>
-                <p className="text-blue-900 font-bold mt-1">${item.price}</p>
+              <div>
+                <h2 className="font-bold text-lg">{item.desc}</h2>
+                <p className="text-sm text-gray-500">{item.category}</p>
+                <p className="font-extrabold text-blue-900">
+                  ${item.price.toFixed(2)}
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() =>
-                  updateqty(item._id, item.qty > 1 ? item.qty - 1 : 1)
-                }
-                className="p-2 rounded-full glass-btn hover:scale-105 transition"
-                aria-label="decrease quantity"
-              >
-                <FaMinus />
-              </button>
+            {/* Quantity Controls */}
+            <div className="flex items-center gap-6">
+              <div className="flex items-center bg-gray-100 rounded-full px-2">
+                <button
+                  onClick={() =>
+                    updateqty(item.id, item._id, item.qty - 1)
+                  }
+                  disabled={item.qty <= 1}
+                  className="p-2 disabled:opacity-30"
+                >
+                  <FaMinus size={12} />
+                </button>
 
-              <div className="px-3 py-1 rounded-full text-black">
-                {item.qty}
+                <span className="px-4 font-bold">{item.qty}</span>
+
+                <button
+                  onClick={() =>
+                    updateqty(item.id, item._id, item.qty + 1)
+                  }
+                  className="p-2"
+                >
+                  <FaPlus size={12} />
+                </button>
               </div>
 
+              {/* Remove Item */}
               <button
-                onClick={() => updateqty(item._id, item.qty + 1)}
-                className="p-2 rounded-full glass-btn hover:scale-105 transition"
-                aria-label="increase quantity"
-              >
-                <FaPlus />
-              </button>
-
-              <button
-                onClick={() => removeFromCart(item._id)}
-                className="p-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition"
-                aria-label="remove item"
-                title="Remove item"
+                onClick={() =>
+                  removeFromCart(item._id, item.id)
+                }
+                className="p-3 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition"
               >
                 <FaTrash />
               </button>
             </div>
           </motion.div>
         ))}
-      </motion.div>
+      </div>
 
+      {/* ---------------- FOOTER ---------------- */}
       <motion.div
-        className="mt-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4"
-        initial={{ opacity: 0, y: 25 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
+        className="mt-10 p-6 bg-slate-900 rounded-3xl text-white flex flex-col sm:flex-row items-center justify-between gap-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
-        <div className="text-left">
-          <h2 className="text-xl font-bold text-black">Total:</h2>
-          <div className="text-2xl font-extrabold text-blue-900">
+        <div>
+          <p className="text-gray-400 text-sm">Order Total</p>
+          <h2 className="text-3xl font-black">
             ${totalPrice.toFixed(2)}
-          </div>
+          </h2>
         </div>
 
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-4">
           <button
-            onClick={handlecheckout}
-            className="px-6 py-2 rounded-2xl bg-gray-300 text-gray-900 font-semibold shadow-lg hover:scale-105 transition-transform"
+            onClick={() => setCart([])}
+            className="px-6 py-3 border border-white/20 rounded-xl"
           >
-            Proceed to Checkout
+            Clear Cart
           </button>
 
           <button
-            onClick={() => {
-              setCart([]);
-            }}
-            className="px-4 py-2 rounded-2xl bg-white/6 text-black border border-white/8 hover:bg-white/8 transition"
+            onClick={handleCheckout}
+            className="px-10 py-3 bg-white text-slate-900 font-bold rounded-xl"
           >
-            Clear
+            Checkout
           </button>
         </div>
       </motion.div>
-
-      <style>{`
-        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(6px); }
-        .glass-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; }
-      `}</style>
     </motion.div>
   );
 };

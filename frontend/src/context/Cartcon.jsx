@@ -2,26 +2,32 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 const Cartcon = createContext();
-
 const API_URL = "https://buynext-backend.vercel.app";
 
-// Utility to safely parse localStorage
+/* ---------- Safe LocalStorage ---------- */
 const safeJSONParse = (key) => {
   try {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
-  } catch (e) {
-    console.error(`Invalid JSON in localStorage for ${key}:`, e);
+  } catch {
     localStorage.removeItem(key);
     return [];
   }
 };
 
 export const CartProvider = ({ children }) => {
+<<<<<<< HEAD
+=======
+  /* ---------- State ---------- */
+>>>>>>> 4a71349 (3)
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   const [cart, setCart] = useState(() => safeJSONParse("cart"));
   const [orders, setOrders] = useState(() => safeJSONParse("orders"));
 
+<<<<<<< HEAD
+=======
+  /* ---------- Persist ---------- */
+>>>>>>> 4a71349 (3)
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
@@ -30,25 +36,28 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
+<<<<<<< HEAD
+=======
+  /* ---------- Fetch Cart ---------- */
+>>>>>>> 4a71349 (3)
   const fetchCart = async () => {
     try {
       const res = await fetch(`${API_URL}/cart`);
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
       if (Array.isArray(data)) setCart(data);
     } catch (err) {
-      console.error("Failed to fetch cart, using localStorage fallback:", err);
+      console.error("Fetch cart error:", err);
     }
   };
 
+  /* ---------- Fetch Orders ---------- */
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/orders`);
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
       if (Array.isArray(data)) setOrders(data);
     } catch (err) {
-      console.error("Failed to fetch orders:", err);
+      console.error("Fetch orders error:", err);
     }
   };
 
@@ -57,6 +66,7 @@ export const CartProvider = ({ children }) => {
     fetchOrders();
   }, []);
 
+<<<<<<< HEAD
   // --- FIXED AddToCart Function ---
   const addtoCart = async (product) => {
     // 1. Check if the item already exists in local state
@@ -110,81 +120,172 @@ export const CartProvider = ({ children }) => {
       console.error("Error removing cart item:", err);
     }
   };
+=======
+  /* ======================================================
+     CART LOGIC (AMAZON / FLIPKART STYLE)
+     ====================================================== */
 
-  const updateqty = async (id, qty) => {
-    if (qty < 1) return;
-    setCart((prev) =>
-      prev.map((item) => (item._id === id || item.id === id ? { ...item, qty } : item))
-    );
-    try {
-      await fetch(`${API_URL}/cart/${id}`, {
-        method: "PUT",
+  const addtoCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+
+      // 🔁 EXISTING PRODUCT → INCREASE QTY
+      if (existing) {
+        const updated = prev.map((item) =>
+          item.id === product.id
+            ? { ...item, qty: item.qty + 1 }
+            : item
+        );
+
+        // backend sync using _id
+        fetch(`${API_URL}/cart/${existing._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qty: existing.qty + 1 }),
+        }).catch(console.error);
+
+        return updated;
+      }
+
+      // 🆕 NEW PRODUCT
+      const newItem = { ...product, qty: 1 };
+
+      fetch(`${API_URL}/cart`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ qty }),
-      });
-    } catch (err) {
-      console.error("Failed to update qty:", err);
-    }
-  };
+        body: JSON.stringify(newItem),
+      })
+        .then((res) => res.json())
+        .then((saved) => {
+          // attach Mongo _id but KEEP frontend id
+          setCart((curr) =>
+            curr.map((i) =>
+              i.id === product.id ? { ...i, _id: saved._id } : i
+            )
+          );
+        })
+        .catch(console.error);
 
-  const addToWishlist = (product) => {
-    setWishlist((prev) => {
-      if (!prev.find((item) => item.id === product.id)) return [...prev, product];
-      return prev;
+      return [...prev, newItem];
     });
   };
 
-  const removeFromWishlist = (id) => {
-    setWishlist((prev) => prev.filter((item) => item.id !== id && item._id !== id));
+  const updateqty = (productId, mongoId, qty) => {
+  if (qty < 1) return;
+>>>>>>> 4a71349 (3)
+
+  // ✅ FRONTEND UPDATE → ONLY BY PRODUCT ID
+  setCart((prev) =>
+    prev.map((item) =>
+      item.id === productId ? { ...item, qty } : item
+    )
+  );
+
+<<<<<<< HEAD
+=======
+  // ✅ BACKEND UPDATE → ONLY BY MONGO ID
+  if (mongoId) {
+    fetch(`${API_URL}/cart/${mongoId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qty }),
+    }).catch(console.error);
+  }
+};
+
+
+  const removeFromCart = (mongoId, productId) => {
+  setCart((prev) => {
+    // ✅ Prefer Mongo ID when available
+    if (mongoId) {
+      return prev.filter((item) => item._id !== mongoId);
+    }
+
+    // ✅ Fallback to product ID
+    return prev.filter((item) => item.id !== productId);
+  });
+
+  // backend delete ONLY when mongoId exists
+  if (mongoId) {
+    fetch(`${API_URL}/cart/${mongoId}`, {
+      method: "DELETE",
+    }).catch(console.error);
+  }
+};
+
+
+
+  /* ---------- Wishlist ---------- */
+>>>>>>> 4a71349 (3)
+  const addToWishlist = (product) => {
+    setWishlist((prev) =>
+      prev.find((p) => p.id === product.id) ? prev : [...prev, product]
+    );
   };
 
+  const removeFromWishlist = (id) => {
+    setWishlist((prev) =>
+      prev.filter((item) => item.id !== id && item._id !== id)
+    );
+  };
+
+<<<<<<< HEAD
+=======
+  /* ---------- Orders ---------- */
+>>>>>>> 4a71349 (3)
   const placeOrderWithUser = async (userDetails) => {
-    const newOrder = { 
-      userDetails, 
-      items: cart, 
-      total: cart.reduce((s, i) => s + (i.price * i.qty), 0) 
+    const order = {
+      userDetails,
+      items: cart,
+      total: cart.reduce((s, i) => s + i.price * i.qty, 0),
     };
 
     try {
       const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder),
+        body: JSON.stringify(order),
       });
-      
+
       if (res.ok) {
         setCart([]);
         localStorage.removeItem("cart");
         fetchOrders();
       }
     } catch (err) {
-      console.error("Failed to place order:", err);
+      console.error(err);
     }
   };
 
+<<<<<<< HEAD
+=======
+  /* ---------- Products ---------- */
+>>>>>>> 4a71349 (3)
   const allproducts = [
-    { id: 1, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
-    { id: 2, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
-    { id: 3, img: "https://media.istockphoto.com/id/1142211733/photo/front-of-sweatshirt-with-hood-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=inMPwtP-ebqhXD9_A3bHETPkyC37x0rFNSLYgf6rLMM=", desc: "Long Sleeve Sweatshirts", price: 15.47, category: "Hoodies" },
-    { id: 4, img: "https://images.unsplash.com/photo-1521335629791-ce3acc67bc79", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps" },
-    { id: 5, img: "https://5.imimg.com/data5/SELLER/Default/2024/4/408698097/GN/IJ/OI/13470856/men-t-shirts.jpg", desc: "Cotton T-Shirt", price: 9.47, category: "T-Shirts" },
-    { id: 6, img: "https://media.istockphoto.com/id/1142211733/photo/front-of-sweatshirt-with-hood-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=inMPwtP-ebqhXD9_A3bHETPkyC37x0rFNSLYgf6rLMM=", desc: "Zip-up Hoodie", price: 17.47, category: "Hoodies" },
+    { id: 101, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
+    { id: 102, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
+    { id: 103, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11.jpg", desc: "Long Sleeve Sweatshirts", price: 15.47, category: "Hoodies" },
+    { id: 104, img: "https://lacozt.myshopify.com/cdn/shop/products/Product12.jpg", desc: "Cotton Adjustable Caps", price: 23.47, category: "Caps" },
+    { id: 201, img: "https://lacozt.myshopify.com/cdn/shop/products/Product11.jpg", desc: "Pull Over Hoodie", price: 12.47, category: "Hoodies" },
+    { id: 202, img: "https://diesel.ie/cdn/shop/files/FadiaTeeT25061FF_4_533x.jpg", desc: "Women's Ribbed T-Shirt", price: 19.37, category: "T-Shirts" },
+    { id: 203, img: "https://cdn11.bigcommerce.com/s-1xod74bove/images/stencil/1280x1280/attribute_rule_images/23931_source.jpg", desc: "Men's Pullover Hoodie", price: 13.67, category: "Hoodies" },
+    { id: 204, img: "https://lacozt.myshopify.com/cdn/shop/products/Men_sSweatPulloverHoodie3.jpg", desc: "Performance T-Shirt", price: 10.47, category: "T-Shirts" },
   ];
 
   return (
     <Cartcon.Provider
       value={{
-        wishlist,
-        addToWishlist,
-        removeFromWishlist,
         cart,
+        wishlist,
+        orders,
         addtoCart,
-        setCart,
         updateqty,
         removeFromCart,
-        orders,
+        addToWishlist,
+        removeFromWishlist,
         placeOrderWithUser,
         allproducts,
+        setCart,
       }}
     >
       {children}
@@ -193,6 +294,7 @@ export const CartProvider = ({ children }) => {
 };
 
 export const useCart = () => useContext(Cartcon);
+
 // frontend/src/context/Cartcon.jsx
 // import React, { createContext, useContext, useEffect, useState } from "react";
 

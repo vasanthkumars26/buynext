@@ -98,8 +98,9 @@ app.get("/cart", async (req, res) => {
 app.post("/cart", async (req, res) => {
   try {
     await connectDB();
-    const { id, desc } = req.body;
+    const { id } = req.body;
 
+<<<<<<< HEAD
     // Strict check: Try to find by custom ID, or by description
     let existing = await Cart.findOne({ 
       $or: [
@@ -117,11 +118,31 @@ app.post("/cart", async (req, res) => {
     // Otherwise, create new
     const dataToSave = { ...req.body };
     delete dataToSave._id; 
+=======
+    // 1. Check if item already exists by our product ID
+    let existing = await Cart.findOne({ id: Number(id) });
+
+    if (existing) {
+      // 2. If it exists, JUST increase quantity and save
+      existing.qty = (existing.qty || 0) + 1;
+      const updated = await existing.save();
+      return res.json(updated);
+    }
+
+    // 3. If it doesn't exist, create a clean new one
+    const dataToSave = { ...req.body, qty: 1 };
+    delete dataToSave._id; // IMPORTANT: Prevent ID collisions
+
+>>>>>>> 4a71349 (3)
     const item = new Cart(dataToSave);
     const savedItem = await item.save();
     res.status(201).json(savedItem);
   } catch (err) {
+<<<<<<< HEAD
     res.status(500).json({ message: err.message });
+=======
+    res.status(500).json({ message: "Server Error", error: err.message });
+>>>>>>> 4a71349 (3)
   }
 });
 

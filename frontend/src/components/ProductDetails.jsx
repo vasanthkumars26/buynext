@@ -6,201 +6,236 @@ import { FaShoppingCart, FaHeart, FaChevronLeft } from "react-icons/fa";
 import { useCart } from "../context/Cartcon";
 
 export default function ProductDetails() {
-    const { id } = useParams();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { allproducts = [], addtoCart, addToWishlist, removeFromWishlist, wishlist, cart } = useCart();
+  const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const [product, setProduct] = useState(location.state?.product ?? null);
-    const [loading, setLoading] = useState(false);
-    const [activeImage, setActiveImage] = useState(0);
+  const {
+    allproducts = [],
+    addtoCart,
+    addToWishlist,
+    removeFromWishlist,
+    wishlist = [],
+    cart = [],
+  } = useCart();
 
-    // Safe gallery: images array > img > placeholder
-    const getGallery = (prod) => {
-        if (!prod) return ["https://via.placeholder.com/400"];
-        if (Array.isArray(prod.images) && prod.images.length > 0) return prod.images;
-        if (prod.img) return [prod.img];
-        return ["https://via.placeholder.com/400"];
-    };
+  const [product, setProduct] = useState(location.state?.product ?? null);
+  const [loading, setLoading] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
 
-    const gallery = getGallery(product);
+  /* ---------- IMAGE GALLERY (SAFE) ---------- */
+  const getGallery = (prod) => {
+    if (!prod) return ["https://via.placeholder.com/400"];
+    if (Array.isArray(prod.images) && prod.images.length) return prod.images;
+    if (prod.img) return [prod.img];
+    return ["https://via.placeholder.com/400"];
+  };
 
-    useEffect(() => {
-        if (location.state?.product && String(location.state.product._id) === String(id)) {
-            setProduct(location.state.product);
-            setLoading(false);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-            return;
-        }
+  const gallery = getGallery(product);
 
-        if (!product || String(product._id) !== String(id)) {
-            if (!Array.isArray(allproducts) || allproducts.length === 0) {
-                setLoading(true);
-                setProduct(null);
-                return;
-            }
-            const found = allproducts.find((p) => String(p._id) === String(id));
-            if (found) {
-                setProduct(found);
-                setLoading(false);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            } else {
-                setProduct(null);
-                setLoading(false);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, location.key, location.state, allproducts]);
+  /* ---------- FIND PRODUCT (FIXED ID LOGIC) ---------- */
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-    useEffect(() => {
-        document.title = product ? `${product.desc} — Shop` : "Product — Shop";
-    }, [product]);
-
-    if (loading) {
-        return (
-            <div className="p-6 max-w-4xl mx-auto">
-                <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-white/6">
-                    <FaChevronLeft /> Back
-                </button>
-                <div className="glass-dark rounded-2xl p-6">
-                    <p className="text-sm text-black">Loading product…</p>
-                </div>
-            </div>
-        );
+    // 1️⃣ FROM LINK STATE (HOME → DETAILS)
+    if (
+      location.state?.product &&
+      (String(location.state.product.id) === String(id) ||
+        String(location.state.product._id) === String(id))
+    ) {
+      setProduct(location.state.product);
+      setLoading(false);
+      return;
     }
 
-    if (!product) {
-        return (
-            <div className="p-6 max-w-4xl mx-auto">
-                <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-white/6">
-                    <FaChevronLeft /> Back
-                </button>
-                <div className="glass-dark rounded-2xl p-6">
-                    <h2 className="text-lg font-semibold text-black">Product not found</h2>
-                    <p className="text-sm text-black mt-2">We couldn't find that product. It may have been removed or the ID is incorrect.</p>
-                    <Link to="/" className="mt-4 inline-block text-sm underline text-blue-500">Return to shop</Link>
-                </div>
-            </div>
-        );
+    // 2️⃣ FROM CONTEXT PRODUCTS (REFRESH / DIRECT URL)
+    if (!Array.isArray(allproducts) || allproducts.length === 0) {
+      setLoading(true);
+      return;
     }
 
-    const isWishlisted = wishlist?.some((w) => String(w._id) === String(product._id));
-    const isInCart = cart?.some((c) => String(c._id) === String(product._id));
-
-    return (
-        <div className="p-6 max-w-6xl mx-auto mt-[7%] text-start">
-            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 mb-6 px-3 py-2 rounded-lg bg-white/6">
-                <FaChevronLeft /> Back
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left: gallery */}
-                <div className="space-y-4">
-                    <div className="bg-transparent glass-dark rounded-2xl p-4">
-                        <div className="w-full aspect-[1/1] overflow-hidden rounded-xl">
-                            <img
-                                src={gallery[activeImage] || "https://via.placeholder.com/400"}
-                                alt={product.desc || "Product Image"}
-                                className="w-full h-full object-cover block max-w-full"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                        {gallery.map((g, idx) => (
-                            <div
-                                key={idx}
-                                className={`w-20 h-20 rounded-xl overflow-hidden glass p-1 cursor-pointer border-2 ${idx === activeImage ? "border-cyan-400" : "border-transparent"}`}
-                                onClick={() => setActiveImage(idx)}
-                            >
-                                <img
-                                    src={g || "https://via.placeholder.com/80"}
-                                    alt={`${product.desc}-${idx}`}
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Right: details */}
-                <div>
-                    <div className="glass-dark rounded-2xl p-6 text-start">
-                        <h1 className="text-2xl md:text-3xl font-bold text-black">{product.desc}</h1>
-                        <p className="text-sm text-black mt-2">Category: <span className="font-medium text-white/90">{product.category || "N/A"}</span></p>
-
-                        <div className="mt-4 flex items-center justify-between gap-4">
-                            <div>
-                                <p className="text-2xl font-extrabold">${product.price}</p>
-                                <p className="text-sm text-blue-400 mt-1">Inclusive of taxes (where applicable)</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 mt-3">
-                            <motion.button
-                                whileTap={{ scale: 0.97 }}
-                                onClick={() => isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${isWishlisted ? "bg-red-500 text-white" : "bg-white/6 text-black shadow-md"}`}
-                            >
-                                <FaHeart /> {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
-                            </motion.button>
-
-                            <motion.button
-                                whileTap={{ scale: 0.97 }}
-                                onClick={() => { if (!isInCart) addtoCart(product); }}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-medium ${isInCart ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black border border-white/8 hover:shadow-md"}`}
-                                aria-pressed={!!isInCart}
-                            >
-                                <FaShoppingCart /> {isInCart ? "Added" : "Add to cart"}
-                            </motion.button>
-                        </div>
-
-                        <div className="mt-6">
-                            <h3 className="text-lg font-semibold ">Product details</h3>
-                            <p className="text-sm text-blue-600 mt-2">{product.longDesc || product.desc || "No extended description available."}</p>
-                        </div>
-
-                        <div className="mt-6 flex gap-3">
-                            <Link to="/" className="px-3 py-2 rounded-lg bg-gray-300 inline-block">Continue shopping</Link>
-                            <button
-                                onClick={() => {
-                                    if (!isInCart) addtoCart(product);
-                                    navigate("/checkout", { state: { product } });
-                                }}
-                                className="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 text-gray-900 font-semibold"
-                            >
-                                Go to checkout
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Similar items */}
-            <div className="mt-6">
-                <h4 className="font-semibold text-start text-2xl">Similar items</h4>
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 text-start gap-3">
-                    {allproducts
-                        .filter((p) => String(p._id) !== String(product._id) && p.category === product.category)
-                        .slice(0, 3)
-                        .map((p) => (
-                            <Link
-                                key={p._id}
-                                to={`/product/${p._id}`}
-                                state={{ product: p }}
-                                className="shadow-xl bg-slate-200 rounded-lg p-3 block"
-                                aria-label={`View details for ${p.desc}`}
-                                rel="noopener"
-                            >
-                                <div className="w-full aspect-[1/1] overflow-hidden rounded-md">
-                                    <img src={p.img || "https://via.placeholder.com/200"} alt={p.desc ?? "Product image"} className="w-full h-full object-cover" />
-                                </div>
-                                <p className="text-sm font-medium mt-2 text-black">{p.desc}</p>
-                                <p className="text-sm text-blue-700">${p.price}</p>
-                            </Link>
-                        ))}
-                </div>
-            </div>
-        </div>
+    const found = allproducts.find(
+      (p) => String(p.id) === String(id) || String(p._id) === String(id)
     );
+
+    if (found) {
+      setProduct(found);
+    } else {
+      setProduct(null);
+    }
+
+    setLoading(false);
+  }, [id, location.key, location.state, allproducts]);
+
+  useEffect(() => {
+    document.title = product ? `${product.desc} — Shop` : "Product — Shop";
+  }, [product]);
+
+  /* ---------- STATES ---------- */
+  if (loading) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-gray-200"
+        >
+          <FaChevronLeft /> Back
+        </button>
+        <p className="text-black">Loading product…</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-gray-200"
+        >
+          <FaChevronLeft /> Back
+        </button>
+        <h2 className="text-lg font-semibold text-black">Product not found</h2>
+        <p className="text-sm text-gray-600 mt-2">
+          We couldn't find that product. It may have been removed or the ID is incorrect.
+        </p>
+        <Link to="/" className="mt-4 inline-block text-blue-600 underline">
+          Return to shop
+        </Link>
+      </div>
+    );
+  }
+
+  /* ---------- CART & WISHLIST CHECK (FIXED) ---------- */
+  const isWishlisted = wishlist.some((w) => String(w.id) === String(product.id));
+  const isInCart = cart.some((c) => String(c.id) === String(product.id));
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto mt-[7%]">
+      <button
+        onClick={() => navigate(-1)}
+        className="inline-flex items-center gap-2 mb-6 px-3 py-2 rounded-lg bg-gray-200"
+      >
+        <FaChevronLeft /> Back
+      </button>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ---------- LEFT: IMAGE ---------- */}
+        <div>
+          <div className="rounded-2xl p-4 bg-white shadow">
+            <img
+              src={gallery[activeImage]}
+              alt={product.desc}
+              className="w-full h-auto rounded-xl object-cover"
+            />
+          </div>
+
+          <div className="flex gap-3 mt-3">
+            {gallery.map((img, idx) => (
+              <div
+                key={idx}
+                onClick={() => setActiveImage(idx)}
+                className={`w-20 h-20 cursor-pointer rounded-xl overflow-hidden border-2 ${
+                  idx === activeImage ? "border-blue-500" : "border-transparent"
+                }`}
+              >
+                <img src={img} alt="thumb" className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ---------- RIGHT: DETAILS ---------- */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h1 className="text-2xl md:text-3xl font-bold text-black">
+            {product.desc}
+          </h1>
+
+          <p className="text-sm text-gray-500 mt-1">Category: {product.category}</p>
+
+          <p className="text-3xl font-extrabold text-blue-700 mt-4">
+            ${product.price}
+          </p>
+
+          <div className="flex gap-3 mt-5">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() =>
+                isWishlisted
+                  ? removeFromWishlist(product.id)
+                  : addToWishlist(product)
+              }
+              className={`px-4 py-2 rounded-full flex items-center gap-2 ${
+                isWishlisted ? "bg-red-500 text-white" : "bg-gray-200"
+              }`}
+            >
+              <FaHeart /> {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => !isInCart && addtoCart(product)}
+              className={`px-4 py-2 rounded-full flex items-center gap-2 ${
+                isInCart ? "bg-green-500 text-white" : "bg-blue-600 text-white"
+              }`}
+            >
+              <FaShoppingCart /> {isInCart ? "Added" : "Add to Cart"}
+            </motion.button>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="font-semibold text-lg">Product details</h3>
+            <p className="text-sm text-gray-600 mt-2">
+              {product.longDesc || product.desc}
+            </p>
+          </div>
+
+          <div className="flex gap-3 mt-6">
+            <Link to="/" className="px-4 py-2 bg-gray-200 rounded-lg">
+              Continue shopping
+            </Link>
+            <button
+              onClick={() => {
+                if (!isInCart) addtoCart(product);
+                navigate("/checkout");
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              Go to checkout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- SIMILAR ITEMS ---------- */}
+      <div className="mt-10">
+        <h4 className="text-2xl font-semibold">Similar items</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          {allproducts
+            .filter(
+              (p) =>
+                String(p.id) !== String(product.id) &&
+                p.category === product.category
+            )
+            .slice(0, 3)
+            .map((p) => (
+              <Link
+                key={p.id}
+                to={`/product/${p.id}`}
+                state={{ product: p }}
+                className="bg-white p-3 rounded-xl shadow block"
+              >
+                <img
+                  src={p.img}
+                  alt={p.desc}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <p className="mt-2 font-medium">{p.desc}</p>
+                <p className="text-blue-700 font-bold">${p.price}</p>
+              </Link>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
 }
