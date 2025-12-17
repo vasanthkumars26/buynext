@@ -16,18 +16,12 @@ const safeJSONParse = (key) => {
 };
 
 export const CartProvider = ({ children }) => {
-<<<<<<< HEAD
-=======
   /* ---------- State ---------- */
->>>>>>> 4a71349 (3)
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   const [cart, setCart] = useState(() => safeJSONParse("cart"));
   const [orders, setOrders] = useState(() => safeJSONParse("orders"));
 
-<<<<<<< HEAD
-=======
   /* ---------- Persist ---------- */
->>>>>>> 4a71349 (3)
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
@@ -36,10 +30,7 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-<<<<<<< HEAD
-=======
   /* ---------- Fetch Cart ---------- */
->>>>>>> 4a71349 (3)
   const fetchCart = async () => {
     try {
       const res = await fetch(`${API_URL}/cart`);
@@ -66,61 +57,6 @@ export const CartProvider = ({ children }) => {
     fetchOrders();
   }, []);
 
-<<<<<<< HEAD
-  // --- FIXED AddToCart Function ---
-  const addtoCart = async (product) => {
-    // 1. Check if the item already exists in local state
-    const existingIndex = cart.findIndex((p) => p.id === product.id || p.desc === product.desc);
-
-    if (existingIndex !== -1) {
-      // 2. If it exists, update the quantity locally first
-      const updatedCart = [...cart];
-      const existingItem = updatedCart[existingIndex];
-      existingItem.qty = (existingItem.qty || 1) + 1;
-      
-      setCart(updatedCart);
-
-      // 3. Sync update with backend using the MongoDB _id
-      if (existingItem._id) {
-        fetch(`${API_URL}/cart/${existingItem._id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ qty: existingItem.qty }),
-        }).catch(console.error);
-      }
-    } else {
-      // 4. If it's brand new, add it to state immediately
-      const newItem = { ...product, qty: 1 };
-      setCart((prev) => [...prev, newItem]);
-
-      // 5. Send to backend and update state with the returned MongoDB _id
-      try {
-        const res = await fetch(`${API_URL}/cart`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newItem),
-        });
-        const savedItem = await res.json();
-        
-        // Replace the "temp" local item with the database version (containing _id)
-        setCart((current) =>
-          current.map((item) => (item.desc === product.desc ? savedItem : item))
-        );
-      } catch (err) {
-        console.error("POST Error:", err);
-      }
-    }
-  };
-
-  const removeFromCart = async (id) => {
-    setCart((prev) => prev.filter((item) => item._id !== id && item.id !== id));
-    try {
-      await fetch(`${API_URL}/cart/${id}`, { method: "DELETE" });
-    } catch (err) {
-      console.error("Error removing cart item:", err);
-    }
-  };
-=======
   /* ======================================================
      CART LOGIC (AMAZON / FLIPKART STYLE)
      ====================================================== */
@@ -138,11 +74,13 @@ export const CartProvider = ({ children }) => {
         );
 
         // backend sync using _id
-        fetch(`${API_URL}/cart/${existing._id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ qty: existing.qty + 1 }),
-        }).catch(console.error);
+        if (existing._id) {
+          fetch(`${API_URL}/cart/${existing._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ qty: existing.qty + 1 }),
+          }).catch(console.error);
+        }
 
         return updated;
       }
@@ -157,7 +95,6 @@ export const CartProvider = ({ children }) => {
       })
         .then((res) => res.json())
         .then((saved) => {
-          // attach Mongo _id but KEEP frontend id
           setCart((curr) =>
             curr.map((i) =>
               i.id === product.id ? { ...i, _id: saved._id } : i
@@ -171,52 +108,41 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateqty = (productId, mongoId, qty) => {
-  if (qty < 1) return;
->>>>>>> 4a71349 (3)
+    if (qty < 1) return;
 
-  // ✅ FRONTEND UPDATE → ONLY BY PRODUCT ID
-  setCart((prev) =>
-    prev.map((item) =>
-      item.id === productId ? { ...item, qty } : item
-    )
-  );
+    // ✅ FRONTEND UPDATE
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === productId ? { ...item, qty } : item
+      )
+    );
 
-<<<<<<< HEAD
-=======
-  // ✅ BACKEND UPDATE → ONLY BY MONGO ID
-  if (mongoId) {
-    fetch(`${API_URL}/cart/${mongoId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qty }),
-    }).catch(console.error);
-  }
-};
-
+    // ✅ BACKEND UPDATE
+    if (mongoId) {
+      fetch(`${API_URL}/cart/${mongoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qty }),
+      }).catch(console.error);
+    }
+  };
 
   const removeFromCart = (mongoId, productId) => {
-  setCart((prev) => {
-    // ✅ Prefer Mongo ID when available
+    setCart((prev) => {
+      if (mongoId) {
+        return prev.filter((item) => item._id !== mongoId);
+      }
+      return prev.filter((item) => item.id !== productId);
+    });
+
     if (mongoId) {
-      return prev.filter((item) => item._id !== mongoId);
+      fetch(`${API_URL}/cart/${mongoId}`, {
+        method: "DELETE",
+      }).catch(console.error);
     }
-
-    // ✅ Fallback to product ID
-    return prev.filter((item) => item.id !== productId);
-  });
-
-  // backend delete ONLY when mongoId exists
-  if (mongoId) {
-    fetch(`${API_URL}/cart/${mongoId}`, {
-      method: "DELETE",
-    }).catch(console.error);
-  }
-};
-
-
+  };
 
   /* ---------- Wishlist ---------- */
->>>>>>> 4a71349 (3)
   const addToWishlist = (product) => {
     setWishlist((prev) =>
       prev.find((p) => p.id === product.id) ? prev : [...prev, product]
@@ -229,10 +155,7 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-<<<<<<< HEAD
-=======
   /* ---------- Orders ---------- */
->>>>>>> 4a71349 (3)
   const placeOrderWithUser = async (userDetails) => {
     const order = {
       userDetails,
@@ -257,10 +180,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-<<<<<<< HEAD
-=======
   /* ---------- Products ---------- */
->>>>>>> 4a71349 (3)
   const allproducts = [
     { id: 101, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
     { id: 102, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },
@@ -294,6 +214,7 @@ export const CartProvider = ({ children }) => {
 };
 
 export const useCart = () => useContext(Cartcon);
+
 
 // frontend/src/context/Cartcon.jsx
 // import React, { createContext, useContext, useEffect, useState } from "react";
