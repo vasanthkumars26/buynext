@@ -18,12 +18,10 @@ const safeJSONParse = (key) => {
 };
 
 export const CartProvider = ({ children }) => {
-  // --- State Initialization ---
   const [wishlist, setWishlist] = useState(() => safeJSONParse("wishlist"));
   const [cart, setCart] = useState(() => safeJSONParse("cart"));
   const [orders, setOrders] = useState(() => safeJSONParse("orders"));
 
-  // --- Sync State to LocalStorage ---
   useEffect(() => {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
@@ -32,7 +30,6 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // --- API Calls ---
   const fetchCart = async () => {
     try {
       const res = await fetch(`${API_URL}/cart`);
@@ -60,49 +57,52 @@ export const CartProvider = ({ children }) => {
     fetchOrders();
   }, []);
 
-  // --- Cart Actions ---
+  // --- FIXED AddToCart Function ---
   const addtoCart = async (product) => {
-    setCart((prev) => {
-      // Logic: Match by 'id' (from Belhome) or 'desc' (backup)
-      const existing = prev.find((p) => p.id === product.id || p.desc === product.desc);
+    // 1. Check if the item already exists in local state
+    const existingIndex = cart.findIndex((p) => p.id === product.id || p.desc === product.desc);
 
-      if (existing) {
-        const updatedItem = { ...existing, qty: (existing.qty || 1) + 1 };
-        
-        // Update quantity on server using the DB's real _id
-        if (existing._id) {
-          fetch(`${API_URL}/cart/${existing._id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ qty: updatedItem.qty }),
-          }).catch(console.error);
-        }
+    if (existingIndex !== -1) {
+      // 2. If it exists, update the quantity locally first
+      const updatedCart = [...cart];
+      const existingItem = updatedCart[existingIndex];
+      existingItem.qty = (existingItem.qty || 1) + 1;
+      
+      setCart(updatedCart);
 
-        return prev.map((p) => (p.desc === product.desc ? updatedItem : p));
-      } else {
-        const newItem = { ...product, qty: 1 };
+      // 3. Sync update with backend using the MongoDB _id
+      if (existingItem._id) {
+        fetch(`${API_URL}/cart/${existingItem._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ qty: existingItem.qty }),
+        }).catch(console.error);
+      }
+    } else {
+      // 4. If it's brand new, add it to state immediately
+      const newItem = { ...product, qty: 1 };
+      setCart((prev) => [...prev, newItem]);
 
-        fetch(`${API_URL}/cart`, {
+      // 5. Send to backend and update state with the returned MongoDB _id
+      try {
+        const res = await fetch(`${API_URL}/cart`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newItem),
-        })
-        .then(res => res.json())
-        .then(data => {
-          // Sync state with the real MongoDB _id returned from server
-          setCart(current => 
-            current.map(item => item.desc === product.desc ? data : item)
-          );
-        })
-        .catch(err => console.error("POST Error:", err));
-
-        return [...prev, newItem];
+        });
+        const savedItem = await res.json();
+        
+        // Replace the "temp" local item with the database version (containing _id)
+        setCart((current) =>
+          current.map((item) => (item.desc === product.desc ? savedItem : item))
+        );
+      } catch (err) {
+        console.error("POST Error:", err);
       }
-    });
+    }
   };
 
   const removeFromCart = async (id) => {
-    // Filter out by either MongoDB _id or our custom id
     setCart((prev) => prev.filter((item) => item._id !== id && item.id !== id));
     try {
       await fetch(`${API_URL}/cart/${id}`, { method: "DELETE" });
@@ -127,7 +127,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // --- Wishlist Actions ---
   const addToWishlist = (product) => {
     setWishlist((prev) => {
       if (!prev.find((item) => item.id === product.id)) return [...prev, product];
@@ -139,7 +138,6 @@ export const CartProvider = ({ children }) => {
     setWishlist((prev) => prev.filter((item) => item.id !== id && item._id !== id));
   };
 
-  // --- Order Actions ---
   const placeOrderWithUser = async (userDetails) => {
     const newOrder = { 
       userDetails, 
@@ -156,15 +154,14 @@ export const CartProvider = ({ children }) => {
       
       if (res.ok) {
         setCart([]);
-        localStorage.removeItem("cart"); // Clean up local storage
-        fetchOrders(); // Refresh order history
+        localStorage.removeItem("cart");
+        fetchOrders();
       }
     } catch (err) {
       console.error("Failed to place order:", err);
     }
   };
 
-  // Static Product Data
   const allproducts = [
     { id: 1, img: "https://lacozt.myshopify.com/cdn/shop/products/Product10.jpg", desc: "Structured Fedora Hat", price: 18.47, category: "Caps" },
     { id: 2, img: "https://lacozt.myshopify.com/cdn/shop/products/Product9.jpg", desc: "Regular Fit T-Shirt", price: 8.47, category: "T-Shirts" },

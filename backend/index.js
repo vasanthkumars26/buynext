@@ -100,22 +100,28 @@ app.post("/cart", async (req, res) => {
     await connectDB();
     const { id, desc } = req.body;
 
-    const existing = await Cart.findOne({ $or: [{ id: id }, { desc: desc }] });
+    // Strict check: Try to find by custom ID, or by description
+    let existing = await Cart.findOne({ 
+      $or: [
+        { id: id, id: { $ne: null } }, // Only match ID if it's not null
+        { desc: desc }
+      ] 
+    });
 
     if (existing) {
-      existing.qty += 1;
+      existing.qty = (existing.qty || 0) + 1;
       await existing.save();
-      return res.json(existing);
+      return res.json(existing); // Return the updated existing item
     }
 
+    // Otherwise, create new
     const dataToSave = { ...req.body };
-    delete dataToSave._id; // Prevent collision with MongoDB's auto-generated _id
-
+    delete dataToSave._id; 
     const item = new Cart(dataToSave);
     const savedItem = await item.save();
     res.status(201).json(savedItem);
   } catch (err) {
-    res.status(500).json({ message: "Cart POST error", error: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
