@@ -1,162 +1,93 @@
-// frontend/src/components/OrdersPage.jsx
+// frontend/src/pages/OrdersPage.jsx
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useCart } from "../context/Cartcon";
-import AppTheme from "../common/Apptheme";
-import { motion } from "framer-motion";
 
-const BACKEND_ORDERS_URL = "https://buynext-backend.vercel.app/orders";
-
-export default function OrdersPage() {
-  const { orders: ctxOrders = [] } = useCart();
-  const location = useLocation();
-  const [orders, setOrders] = useState(Array.isArray(ctxOrders) ? ctxOrders : []);
-  const [loading, setLoading] = useState(false);
+const OrdersPage = () => {
+  const { orders, fetchOrders } = useCart();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function fetchOrdersFromServer() {
+  const loadOrders = async () => {
     setLoading(true);
     setError("");
     try {
-      const resp = await fetch(BACKEND_ORDERS_URL, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
-      const data = await resp.json();
-      const list = Array.isArray(data) ? data : data.orders || [];
-      setOrders(list);
+      await fetchOrders();
     } catch (err) {
-      setError("Unable to load orders.");
-      if (Array.isArray(ctxOrders) && ctxOrders.length) setOrders(ctxOrders);
-      else setOrders([]);
+      console.error("Load orders failed:", err);
+      setError("Failed to load orders. Please try again later.");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchOrdersFromServer();
+    loadOrders();
   }, []);
-
-  useEffect(() => {
-    if (location.state?.order) {
-      const t = setTimeout(() => fetchOrdersFromServer(), 600);
-      return () => clearTimeout(t);
-    }
-  }, [location.state?.order]);
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <p className="text-blue-500">Loading your orders…</p>
-      </div>
+      <h2 className="text-black text-center mt-[28%] md:mt-[10%] text-xl">
+        Loading orders...
+      </h2>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <p className="text-red-400 mb-3">{error}</p>
-        <button
-          onClick={fetchOrdersFromServer}
-          className="px-4 py-2 rounded bg-gray-700 text-white"
-        >
-          Retry
-        </button>
-      </div>
+      <h2 className="text-red-500 text-center mt-[28%] md:mt-[10%] text-xl">
+        {error}
+      </h2>
     );
   }
 
   if (!orders || orders.length === 0) {
     return (
-      <h2 className="text-white text-center mt-[8%] text-xl">
+      <h2 className="text-black text-center mt-[28%] md:mt-[10%] text-xl">
         No orders yet
       </h2>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-      className="max-w-5xl mx-auto mt-[7%] px-4"
-    >
-      <h1 className="text-3xl font-bold mb-6 text-black">Your Orders</h1>
-
-      <div className="space-y-6">
-        {orders.map((order, index) => {
-          const id =
-            order._id ||
-            order.id ||
-            order.orderId ||
-            Math.random().toString(36).slice(2, 9);
-
-          const date =
-            order.placedAt ||
-            order.date ||
-            order.createdAt ||
-            "";
-
-          const items = order.items || order.cart || [];
-
-          const total =
-            order.total ??
-            order.amount ??
-            items.reduce(
-              (s, i) => s + (i.price || 0) * (i.qty || 1),
-              0
-            );
-
-          return (
-            <motion.div
-              key={id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.35,
-                delay: index * 0.08,
-                ease: "easeOut",
-              }}
-              className="bg-white/10 border border-white/6 p-4 rounded-lg shadow-md"
-            >
-              <div className="flex justify-between items-center mb-3 text-blue-600">
-                <h2 className="font-semibold">Order #{id}</h2>
-                <span className="text-sm">
-                  {date ? new Date(date).toLocaleString() : ""}
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                {items.map((item) => (
-                  <div
-                    key={item._id || item.id || `${id}-${item.desc}`}
-                    className="flex justify-between items-center border-b pb-2"
-                  >
-                    <div>
-                      <div className="font-medium">{item.desc}</div>
-                      <div className="text-sm text-gray-600">
-                        Qty: {item.qty ?? 1}
-                      </div>
-                    </div>
-                    <div className="font-semibold">
-                      ${((item.price ?? 0) * (item.qty ?? 1)).toFixed(2)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-right font-bold mt-3 text-black">
-                Total:{" "}
-                <span className="text-blue-800">
-                  ${Number(total).toFixed(2)}
-                </span>
-              </div>
-            </motion.div>
-          );
-        })}
+    <div className="p-4 md:p-8">
+      <h1 className="text-2xl font-semibold text-white mb-6">Your Orders</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {orders.map((order, idx) => (
+          <div
+            key={idx}
+            className="bg-gray-800 p-4 rounded-lg shadow-md text-white"
+          >
+            <h3 className="font-semibold mb-2">
+              Order #{order._id || idx + 1}
+            </h3>
+            <p className="text-sm mb-2">
+              {/* Added optional chaining ?. just in case items is missing */}
+              Total Items: {order.items?.length || 0} 
+            </p>
+            <p className="text-sm mb-2">
+              {/* ✅ FIXED LINE BELOW: Added (order.total || 0) fallback */}
+              Total Price: ${(Number(order.total) || 0).toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400 mb-2">
+              Date: {new Date(order.date).toLocaleString()}
+            </p>
+            <div className="mt-2">
+              {order.items && order.items.map((item, i) => (
+                <div key={i} className="flex items-center mb-1">
+                  <img
+                    src={item.img}
+                    alt={item.desc}
+                    className="w-10 h-10 rounded mr-2 object-cover"
+                  />
+                  <span className="text-sm">{item.desc} x {item.qty}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-    </motion.div>
+    </div>
   );
-}
+};
+
+export default OrdersPage;

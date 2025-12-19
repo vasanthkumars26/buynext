@@ -117,7 +117,7 @@ const CheckoutPage = () => {
             ) : (
               <div className="space-y-3">
                 {cart.map((it) => (
-                  <div key={it._id} className="flex items-center justify-between">
+                  <div key={it._id || it.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-14 h-14 rounded overflow-hidden bg-gray-100">
                         <img
