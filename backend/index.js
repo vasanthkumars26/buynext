@@ -147,14 +147,57 @@ app.delete("/cart/:id", async (req, res) => {
 });
 
 /* ------------------ ORDERS ------------------ */
+// ------------------ ORDERS ------------------
 app.get("/orders", async (req, res) => {
-  const orders = await Order.find();
-  res.json(orders);
+  try {
+    // Connect to DB (if not already connected)
+    await connectDB();
+
+    // Ensure the collection exists, fetch all orders
+    const rawOrders = await mongoose.connection.db
+      .collection("orders")
+      .find({})
+      .toArray();
+
+    // Return JSON with count and data
+    res.json({
+      count: Array.isArray(rawOrders) ? rawOrders.length : 0,
+      data: Array.isArray(rawOrders) ? rawOrders : [],
+    });
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+
+    // Return JSON instead of HTML for errors
+    res.status(500).json({
+      error: "Failed to fetch orders",
+      details: err.message,
+    });
+  }
 });
 
 app.post("/orders", async (req, res) => {
-  const ord = new Order(req.body);
-  res.status(201).json(await ord.save());
+  try {
+    await connectDB();
+
+    const { userDetails, items } = req.body;
+    if (!userDetails || !items || !Array.isArray(items)) {
+      return res.status(400).json({ error: "Invalid order payload" });
+    }
+
+    const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const order = new Order({
+      userDetails,
+      items,
+      total,
+      date: new Date(),
+    });
+
+    const savedOrder = await order.save();
+    res.status(201).json(savedOrder);
+  } catch (err) {
+    console.error("Error creating order:", err);
+    res.status(500).json({ error: "Failed to create order", details: err.message });
+  }
 });
 
 /* ------------------ BLOG ------------------ */
