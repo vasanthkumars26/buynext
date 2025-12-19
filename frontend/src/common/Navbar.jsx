@@ -106,7 +106,7 @@ const Navbar = () => {
 
                 onKeyDown={handleKeyDown}
                 placeholder="Search for products"
-                className="w-full pl-10 pr-4 py-2 rounded-md outline-none text-gray-800"
+                className="w-full pl-3 pr-4 py-2  rounded-md outline-none text-gray-800"
               />
             </div>
           )}
@@ -116,7 +116,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-6 text-white">
             {log && (
               <Link to="/" className="relative group hover:scale-110 transition">
-                <FaHome className="text-xl" />
+                <FaHome className="text-2xl" />
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
                   Home
                 </span>
@@ -151,12 +151,14 @@ const Navbar = () => {
 
 
             {log && (
-              <Link to="/admin" className="relative group hover:scale-110 transition">
-                <FaAddressCard className="text-xl" />
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-                  Admin
-                </span>
-              </Link>
+              auth.currentUser && auth.currentUser.uid === "CrA2flVHDlT53IqfpC036z4xpTQ2" && (
+                <Link to="/admin" className="relative group hover:scale-110 transition">
+                  <FaAddressCard className="text-xl" />
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                    Admin
+                  </span>
+                </Link>
+              )
             )}
 
 
@@ -227,7 +229,16 @@ const Navbar = () => {
           <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
           {log && <li><Link to="/wishlist" onClick={() => setMenuOpen(false)}>Wishlist</Link></li>}
           {log && <li><Link to="/cart" onClick={() => setMenuOpen(false)}>Cart</Link></li>}
-          <li><Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link></li>
+           {log && (
+              auth.currentUser && auth.currentUser.uid === "CrA2flVHDlT53IqfpC036z4xpTQ2" && (
+                <Link to="/admin" className="relative group hover:scale-110 transition">
+                  <FaAddressCard className="text-xl" />
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                    Admin
+                  </span>
+                </Link>
+              )
+            )}
           {log && <li><Link to="/orders" onClick={() => setMenuOpen(false)}>Orders</Link></li>}
           <li>
             {log ? (

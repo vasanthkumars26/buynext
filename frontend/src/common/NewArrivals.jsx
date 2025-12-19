@@ -1,106 +1,89 @@
 // frontend/src/common/NewArrivals.jsx
 import React, { useEffect, useState } from "react";
-import { FaHeart, FaShoppingCart } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaShoppingCart, FaRegHeart, FaHeart } from "react-icons/fa";
 import { useCart } from "../context/Cartcon";
 
-const LOCAL_PRODUCTS_KEY = "buynext_products_v1";
+const API = "https://buynext-backend.vercel.app";
 
-export default function NewArrivals({ limit = 6 }) {
+export default function NewArrivals() {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const { cart = [], wishlist = [], addtoCart, addToWishlist, removeFromWishlist } = useCart();
 
   useEffect(() => {
-    const raw = localStorage.getItem(LOCAL_PRODUCTS_KEY);
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    setLoading(true);
     try {
-      const parsed = raw ? JSON.parse(raw) : [];
-      // prefer createdAt if available, else fallback to _id sorting
-      const sorted = Array.isArray(parsed)
-        ? parsed.slice().sort((a, b) => {
-            if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
-            return (b._id || "").localeCompare(a._id || "");
-          })
-        : [];
-      setProducts(sorted.slice(0, limit));
-    } catch {
+      const res = await fetch(`${API}/admin/products`);
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      const data = await res.json();
+      setProducts(data || []);
+    } catch (err) {
+      console.error(err);
       setProducts([]);
+    } finally {
+      setLoading(false);
     }
-  }, [limit]);
+  };
 
-  if (!products.length) return null;
+  const WishlistButton = ({ product }) => {
+    const isWishlisted = wishlist.some((item) => item._id === product._id);
+    return (
+      <motion.button
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => (isWishlisted ? removeFromWishlist(product._id) : addToWishlist(product))}
+        className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-shadow focus:outline-none ${
+          isWishlisted ? "bg-red-500 text-white" : "bg-gray-100 text-black shadow-md"
+        }`}
+      >
+        {isWishlisted ? <FaHeart /> : <FaRegHeart />}
+      </motion.button>
+    );
+  };
 
-  const isWishlisted = (p) => Array.isArray(wishlist) && wishlist.some((w) => String(w._id) === String(p._id));
-  const isInCart = (p) => Array.isArray(cart) && cart.some((c) => String(c._id) === String(p._id));
+  if (loading) return <div className="p-6 text-center">Loading new arrivals...</div>;
+  if (!products.length) return <div className="p-6 text-center">No new arrivals yet.</div>;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-      <h2 className="text-2xl font-bold text-black mb-4">New Arrivals</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-start ">
-        {products.map((p) => (
-          <div
-            key={p._id}
-            className="relative  rounded-2xl p-3 cursor-pointer hover:scale-105 transition bg-slate-100 shadow-md"
-            onClick={() => navigate(`/product/${p._id}`, { state: { product: p } })}
-          >
-            {/* Wishlist icon top-right */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (isWishlisted(p)) removeFromWishlist(p._id);
-                else addToWishlist(p);
-              }}
-              className={`absolute top-3 right-3 z-10 p-2 rounded-full transition ${
-                isWishlisted(p) ? "bg-red-500 text-white" : "border border-black text-xs  bg-white/6 "
-              }`}
-              title={isWishlisted(p) ? "Remove from wishlist" : "Add to wishlist"}
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6 text-black">New Arrivals</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {products.map((product) => {
+          const isInCart = cart.some((c) => c._id === product._id);
+          return (
+            <motion.article
+              key={product._id}
+              whileHover={{ y: -6, boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}
+              className="bg-slate-100 rounded-2xl p-3 w-full shadow-md border border-gray-200"
             >
-              <FaHeart />
-            </button>
-
-            {/* Product image */}
-            <div className="w-full h-40 rounded overflow-hidden bg-white/6 mb-2">
-              <img
-                src={p.images?.[0] || p.img}
-                alt={p.desc}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Product info */}
-            <div className="text-blue-600 font-semibold truncate">{p.desc}</div>
-            <div className="text-blue-900 font-bold mt-1">${p.price}</div>
-
-            {/* Actions (Add to cart) */}
-            <div className="mt-3 flex items-center justify-between gap-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!isInCart(p)) addtoCart(p);
-                }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-2xl text-sm font-medium transition ${
-                  isInCart(p) ? "bg-green-500 text-white cursor-default" : "bg-white/6 text-black"
-                }`}
-                title={isInCart(p) ? "Already in cart" : "Add to cart"}
-                aria-pressed={isInCart(p)}
-              >
-                <FaShoppingCart />
-                <span className="hidden sm:inline">{isInCart(p) ? "Added" : "Add"}</span>
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // quick view: navigate but keep behavior consistent (same as card click)
-                  navigate(`/product/${p._id}`, { state: { product: p } });
-                }}
-                className="px-3 py-2 text-sm rounded-2xl bg-white/6"
-              >
-                View
-              </button>
-            </div>
-          </div>
-        ))}
+              <Link to={`/product/${product._id}`} state={{ product }} className="block">
+                <div className="w-full aspect-square overflow-hidden rounded-xl bg-white">
+                  <img src={product.img} alt={product.desc} className="w-full h-full object-cover" />
+                </div>
+                <h2 className="mt-3 font-semibold text-blue-700 text-sm sm:text-base">{product.desc}</h2>
+              </Link>
+              <p className="text-blue-900 font-bold mt-1">₹{product.price}</p>
+              <div className="flex gap-2 mt-3">
+                <WishlistButton product={product} />
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => !isInCart && addtoCart(product)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${
+                    isInCart ? "bg-green-500 text-white cursor-default" : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  {isInCart ? "Added" : "Add to Cart"} <FaShoppingCart />
+                </motion.button>
+              </div>
+            </motion.article>
+          );
+        })}
       </div>
     </div>
   );

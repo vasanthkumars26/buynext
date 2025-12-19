@@ -45,7 +45,7 @@ const Login = () => {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 mt-[2%]">
       <GlassCard className="max-w-md w-full bg-white shadow-xl rounded-2xl border border-gray-200">
-        <form onSubmit={handlelogin} className="space-y-6 text-gray-700">
+        <form onSubmit={handlelogin} className="space-y-6 text-gray-700 ">
           <h2 className="text-2xl font-semibold text-[#2874F0]">
             Hey {name || "there"} 👋
           </h2>
@@ -55,7 +55,7 @@ const Login = () => {
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-start ml-2">
               Name
             </label>
             <input
@@ -70,7 +70,7 @@ const Login = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-start ml-2">
               Email
             </label>
             <input
@@ -85,7 +85,7 @@ const Login = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-start ml-2">
               Password
             </label>
             <input

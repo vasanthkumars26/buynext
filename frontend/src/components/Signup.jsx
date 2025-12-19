@@ -46,13 +46,13 @@ const Signup = () => {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 mt-[3%] bg-gray-50">
       <GlassCard className="max-w-md w-full bg-white shadow-lg border border-gray-200">
-        <form onSubmit={handleuser} className="space-y-6">
+        <form onSubmit={handleuser} className="space-y-6 text-start ">
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 text-center">
             SignUp
           </h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Name:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 ml-2">Name:</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -64,7 +64,7 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 ml-2">Email:</label>
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +76,7 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 ml-2">Password:</label>
             <input
               value={pass}
               onChange={(e) => setPass(e.target.value)}
@@ -88,7 +88,7 @@ const Signup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm password:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2 ml-2">Confirm password:</label>
             <input
               value={cpass}
               onChange={(e) => setCpass(e.target.value)}

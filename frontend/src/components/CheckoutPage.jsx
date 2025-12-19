@@ -133,21 +133,7 @@ const CheckoutPage = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => decQty(it)}
-                        className="px-2 py-1 bg-gray-300 text-black rounded"
-                      >
-                        -
-                      </button>
-                      <div className="w-6 text-center text-black">{it.qty ?? 1}</div>
-                      <button
-                        type="button"
-                        onClick={() => incQty(it)}
-                        className="px-2 py-1 bg-gray-300 text-black rounded"
-                      >
-                        +
-                      </button>
+                      
                       <button
                         type="button"
                         onClick={() => removeFromCart?.(it._id)}

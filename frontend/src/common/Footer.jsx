@@ -3,16 +3,15 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="mt-5 w-full bg-[#0053E2] text-white">
+    <footer className="mt-5 w-full relative bottom-0 bg-[#0053E2] text-white">
       <div className="w-full">
         <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
             <div className="border border-white/20 rounded-xl p-6 hover:bg-white/10 transition">
-              <h3 className="text-lg font-bold mb-3">About Us</h3>
+              <h3 className="text-lg font-bold mb-3">Why Shop With Us</h3>
               <p className="text-sm text-white/80 leading-relaxed">
-                Pellentesque posuere orci lobortis scelerisque blandit. Donec id
-                tellus lacinia an, tincidunt risus ac, consequat velit.
+                Quality fashion, affordable prices, secure payments, and reliable delivery—all designed to give you a smooth and satisfying shopping experience.
               </p>
             </div>
 

@@ -146,16 +146,22 @@ export const CartProvider = ({ children }) => {
 
   /* ---------- Wishlist ---------- */
   const addToWishlist = (product) => {
-    setWishlist((prev) =>
-      prev.find((p) => p.id === product.id) ? prev : [...prev, product]
+  setWishlist((prev) => {
+    // Check both _id and id to avoid duplicates
+    const exists = prev.some(
+      (p) => (p._id && product._id && p._id === product._id) || p.id === product.id
     );
-  };
+    return exists ? prev : [...prev, product];
+  });
+};
 
-  const removeFromWishlist = (id) => {
-    setWishlist((prev) =>
-      prev.filter((item) => item.id !== id && item._id !== id)
-    );
-  };
+const removeFromWishlist = (product) => {
+  // Accept product object or id
+  const targetId = product._id || product.id || product;
+  setWishlist((prev) =>
+    prev.filter((item) => item._id !== targetId && item.id !== targetId)
+  );
+};
 
   /* ---------- Orders ---------- */
   const placeOrderWithUser = async (userDetails) => {

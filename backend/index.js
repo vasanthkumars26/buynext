@@ -220,31 +220,95 @@ app.patch("/api/blogs/like/:id", async (req, res) => {
 });
 
 /* ------------------ PRODUCTS ------------------ */
-app.get("/admin/products", async (req, res) => {
-  res.json(await Product.find().sort({ createdAt: -1 }));
+// app.get("/admin/products", async (req, res) => {
+//   res.json(await Product.find().sort({ createdAt: -1 }));
+// });
+
+// app.get("/admin/products/:id", async (req, res) => {
+//   const product = await Product.findById(req.params.id);
+//   if (!product) return res.status(404).json({ message: "Product not found" });
+//   res.json(product);
+// });
+
+// app.post("/admin/products", async (req, res) => {
+//   res.status(201).json(await new Product(req.body).save());
+// });
+
+// app.put("/admin/products/:id", async (req, res) => {
+//   res.json(await Product.findByIdAndUpdate(
+//     req.params.id,
+//     { ...req.body, updatedAt: new Date() },
+//     { new: true }
+//   ));
+// });
+
+// app.delete("/admin/products/:id", async (req, res) => {
+//   await Product.findByIdAndDelete(req.params.id);
+//   res.json({ message: "Deleted successfully" });
+// });
+
+/* ------------------ PRODUCTS ------------------ */
+
+// USER SIDE
+app.get("/products", async (req, res) => {
+  try {
+    await connectDB();
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    console.error("GET /products", err);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 });
 
-app.get("/admin/products/:id", async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) return res.status(404).json({ message: "Product not found" });
-  res.json(product);
+// ADMIN SIDE
+app.get("/admin/products", async (req, res) => {
+  try {
+    await connectDB();
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    console.error("GET /admin/products", err);
+    res.status(500).json({ error: "Admin products failed" });
+  }
 });
 
 app.post("/admin/products", async (req, res) => {
-  res.status(201).json(await new Product(req.body).save());
+  try {
+    await connectDB();
+    const product = new Product(req.body);
+    const saved = await product.save();
+    res.status(201).json(saved);
+  } catch (err) {
+    console.error("POST /admin/products", err);
+    res.status(500).json({ error: "Create product failed" });
+  }
 });
 
 app.put("/admin/products/:id", async (req, res) => {
-  res.json(await Product.findByIdAndUpdate(
-    req.params.id,
-    { ...req.body, updatedAt: new Date() },
-    { new: true }
-  ));
+  try {
+    await connectDB();
+    const updated = await Product.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, updatedAt: new Date() },
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    console.error("PUT /admin/products", err);
+    res.status(500).json({ error: "Update failed" });
+  }
 });
 
 app.delete("/admin/products/:id", async (req, res) => {
-  await Product.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted successfully" });
+  try {
+    await connectDB();
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    console.error("DELETE /admin/products", err);
+    res.status(500).json({ error: "Delete failed" });
+  }
 });
 
 /* ------------------ SERVER ------------------ */

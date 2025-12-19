@@ -5,18 +5,19 @@ import { motion } from "framer-motion";
 import { FaShoppingCart, FaHeart, FaChevronLeft } from "react-icons/fa";
 import { useCart } from "../context/Cartcon";
 
+const API = "https://buynext-backend.vercel.app";
+
 export default function ProductDetails() {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
   const {
-    allproducts = [],
+    cart = [],
+    wishlist = [],
     addtoCart,
     addToWishlist,
     removeFromWishlist,
-    wishlist = [],
-    cart = [],
   } = useCart();
 
   const [product, setProduct] = useState(location.state?.product ?? null);
@@ -33,39 +34,41 @@ export default function ProductDetails() {
 
   const gallery = getGallery(product);
 
-  /* ---------- FIND PRODUCT (FIXED ID LOGIC) ---------- */
+  /* ---------- FETCH PRODUCT FROM ADMIN PRODUCTS ---------- */
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    // 1️⃣ FROM LINK STATE (HOME → DETAILS)
+    const fetchAdminProduct = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API}/admin/products`);
+        if (!res.ok) throw new Error("Failed to fetch products");
+        const data = await res.json();
+
+        const found = data.find(
+          (p) => String(p._id) === String(id) || String(p.id) === String(id)
+        );
+        setProduct(found || null);
+      } catch (err) {
+        console.error("Product fetch error:", err);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // If location state has product (from list click), use it
     if (
       location.state?.product &&
-      (String(location.state.product.id) === String(id) ||
-        String(location.state.product._id) === String(id))
+      (String(location.state.product._id) === String(id) ||
+        String(location.state.product.id) === String(id))
     ) {
       setProduct(location.state.product);
       setLoading(false);
-      return;
-    }
-
-    // 2️⃣ FROM CONTEXT PRODUCTS (REFRESH / DIRECT URL)
-    if (!Array.isArray(allproducts) || allproducts.length === 0) {
-      setLoading(true);
-      return;
-    }
-
-    const found = allproducts.find(
-      (p) => String(p.id) === String(id) || String(p._id) === String(id)
-    );
-
-    if (found) {
-      setProduct(found);
     } else {
-      setProduct(null);
+      fetchAdminProduct();
     }
-
-    setLoading(false);
-  }, [id, location.key, location.state, allproducts]);
+  }, [id, location.key, location.state]);
 
   useEffect(() => {
     document.title = product ? `${product.desc} — Shop` : "Product — Shop";
@@ -106,9 +109,11 @@ export default function ProductDetails() {
     );
   }
 
-  /* ---------- CART & WISHLIST CHECK (FIXED) ---------- */
-  const isWishlisted = wishlist.some((w) => String(w.id) === String(product.id));
-  const isInCart = cart.some((c) => String(c.id) === String(product.id));
+  /* ---------- CART & WISHLIST CHECK ---------- */
+  const isWishlisted = wishlist.some(
+    (w) => String(w._id) === String(product._id)
+  );
+  const isInCart = cart.some((c) => String(c._id) === String(product._id));
 
   return (
     <div className="p-6 max-w-6xl mx-auto mt-[7%]">
@@ -154,7 +159,7 @@ export default function ProductDetails() {
           <p className="text-sm text-gray-500 mt-1">Category: {product.category}</p>
 
           <p className="text-3xl font-extrabold text-blue-700 mt-4">
-            ${product.price}
+            ₹{product.price}
           </p>
 
           <div className="flex gap-3 mt-5">
@@ -162,7 +167,7 @@ export default function ProductDetails() {
               whileTap={{ scale: 0.95 }}
               onClick={() =>
                 isWishlisted
-                  ? removeFromWishlist(product.id)
+                  ? removeFromWishlist(product)
                   : addToWishlist(product)
               }
               className={`px-4 py-2 rounded-full flex items-center gap-2 ${
@@ -204,36 +209,6 @@ export default function ProductDetails() {
               Go to checkout
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* ---------- SIMILAR ITEMS ---------- */}
-      <div className="mt-10">
-        <h4 className="text-2xl font-semibold">Similar items</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {allproducts
-            .filter(
-              (p) =>
-                String(p.id) !== String(product.id) &&
-                p.category === product.category
-            )
-            .slice(0, 3)
-            .map((p) => (
-              <Link
-                key={p.id}
-                to={`/product/${p.id}`}
-                state={{ product: p }}
-                className="bg-white p-3 rounded-xl shadow block"
-              >
-                <img
-                  src={p.img}
-                  alt={p.desc}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <p className="mt-2 font-medium">{p.desc}</p>
-                <p className="text-blue-700 font-bold">${p.price}</p>
-              </Link>
-            ))}
         </div>
       </div>
     </div>
